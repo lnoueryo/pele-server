@@ -4,7 +4,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets'
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 import { Game } from 'src/domain/entities/game.entity'
 import { Player } from 'src/domain/entities/player'
 
@@ -34,6 +34,12 @@ export class PlayerController {
     this.wsClients = this.wsClients.filter((c) => c !== client)
     this.players.delete(client.id)
     this.broadcast('join', Array.from(this.players.values()))
+  }
+
+  @SubscribeMessage('ping')
+  handlePing(client: Socket) {
+    console.log(`Received ping from ${client.id}`)
+    client.emit('pong')
   }
 
   @SubscribeMessage('coordinate')
