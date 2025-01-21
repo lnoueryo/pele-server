@@ -1,7 +1,7 @@
+import { PlayerController } from './../../interfaces/controllers/websocket/player.controller'
 import { Module } from '@nestjs/common'
-import { PlayerWebSocketGateway } from '../websocket/player.websocket.gateway'
 
 @Module({
-  providers: [PlayerWebSocketGateway],
+  providers: [PlayerController],
 })
 export class PlayerModule {}
