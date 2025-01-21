@@ -4,7 +4,7 @@ const PLAYER_START = 3000
 export class Game {
   private players
   public boxes: Box[] = []
-  private boxCreationProbability = 0.06
+  private boxCreationProbability = 0.05
   public startTime: number = 0
   public currentTime: number = 0
   constructor(params: { players: Player[] }) {
@@ -35,7 +35,7 @@ export class Game {
     const y = 0.12
     const width = Math.random()
     const height = getRandomWithMin(0.1) * 0.1
-    const speed = getRandomWithMin(0.15) * 0.02
+    const speed = getRandomWithMin(0.05) * 0.01
     const box = new Box({
       x,
       y,
@@ -46,6 +46,9 @@ export class Game {
     this.boxes.push(box)
     function getRandomWithMin(min) {
       return Math.random() * (1 - min) + min;
+    }
+    function getRandomWithMax(max) {
+      return Math.random() * (1 - max) + max;
     }
   }
 

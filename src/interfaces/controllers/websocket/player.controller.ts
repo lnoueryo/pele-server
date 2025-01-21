@@ -55,7 +55,7 @@ export class PlayerController {
       while (true) {
         game.loop()
         this.broadcast('stage', { boxes: game.boxes })
-        await new Promise(resolve => setTimeout(resolve, 5))
+        await new Promise(resolve => setTimeout(resolve, 16))
         if (game.isGameOver()) {
           break
         }
