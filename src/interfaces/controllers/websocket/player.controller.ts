@@ -52,20 +52,19 @@ export class PlayerController {
     try {
       const players = Array.from(this.players.values())
       const game = new Game({ players })
-      const fixedInterval = 16
-      let lastTime = Date.now()
+      let lastTime = Date.now();
       while (true) {
-        const currentTime = Date.now()
-        const delta = currentTime - lastTime
-        if (delta >= fixedInterval) {
-          game.loop()
-          this.broadcast('stage', { boxes: game.boxes })
-          lastTime = currentTime
-        }
+        const currentTime = Date.now();
+        const deltaTime = (currentTime - lastTime) / 1000; // 秒単位
+        lastTime = currentTime;
+      
+        game.loop(deltaTime); // deltaTime を基に更新
+        this.broadcast('stage', { boxes: game.boxes });
+      
         if (game.isGameOver()) {
-          break
+          break;
         }
-        await new Promise(resolve => setTimeout(resolve, 1))
+        await new Promise(resolve => setTimeout(resolve, 16));
       }
 
       console.log('Done')

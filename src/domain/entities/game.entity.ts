@@ -18,16 +18,14 @@ export class Game {
     }, PLAYER_START)
   }
 
-  loop() {
-    // this.currentTime = timestamp
+  loop(deltaTime: number) {
     for (const box of this.boxes) {
-      box.moveOnIdle()
-      if (box.isOutOfDisplay()) this.deleteBox(box)
+      box.moveOnIdle(deltaTime)
+      if (box.isOutOfDisplay()) this.deleteBox(box);
     }
     if (Math.random() < this.boxCreationProbability) {
-      this.createBox()
+      this.createBox();
     }
-
   }
 
   private createBox() {
