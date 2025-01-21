@@ -82,8 +82,8 @@ export class PlayerController {
         })
         this.broadcast('stage', bb)
         // this.broadcast('stage', game.boxes)
-        await new Promise(resolve => setTimeout(resolve, 1000/ 60))
-        if (game.isGameOver()) {
+        await new Promise(resolve => setTimeout(resolve, 1000 / 60))
+        if (game.isGameOver() || this.players.size === 0) {
           break
         }
       }
