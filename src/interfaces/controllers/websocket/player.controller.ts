@@ -20,8 +20,9 @@ export class PlayerController {
   @WebSocketServer()
   server: Server
 
-  wsClients = []
-  players = new Map()
+  private wsClients = []
+  private isGameStarted = false
+  private players = new Map()
 
   handleConnection(client) {
     console.log('connected')
@@ -49,13 +50,39 @@ export class PlayerController {
   @SubscribeMessage('start')
   async start(@MessageBody() data: any) {
     this.wsClients.forEach((client) => client.id !== data.id && client.emit('start'))
+    if (this.isGameStarted) return
+      this.isGameStarted = true
+      let cachePlayers = this.deepCopyPlayers(this.players)
+      const timer = setInterval(() => {
+        for (const [id, cachedPlayer] of cachePlayers.entries()) {
+          const currentPlayer = this.players.get(id)
+          if (!currentPlayer) {
+            return
+          } else if (currentPlayer.x === cachedPlayer.x && currentPlayer.y === cachedPlayer.y) {
+            currentPlayer.isOver = true
+            console.log(`isOver ${currentPlayer}`)
+          }
+        }
+        cachePlayers = this.deepCopyPlayers(this.players)
+      }, 5000)
     try {
       const players = Array.from(this.players.values())
       const game = new Game({ players })
       while (true) {
         game.loop()
-        this.broadcast('stage', { boxes: game.boxes })
-        await new Promise(resolve => setTimeout(resolve, 16))
+        const bb = game.boxes.map((box) => {
+          const buffer = new ArrayBuffer(20) // 5つのFloat32 (4バイト * 5 = 20バイト)
+          const view = new DataView(buffer)
+          view.setFloat32(0, box.x)
+          view.setFloat32(4, box.y)
+          view.setFloat32(8, box.width)
+          view.setFloat32(12, box.height)
+          view.setFloat32(16, box.speed)
+          return buffer // バッファを直接返す
+        })
+        this.broadcast('stage', bb)
+        // this.broadcast('stage', game.boxes)
+        await new Promise(resolve => setTimeout(resolve, 1000/ 60))
         if (game.isGameOver()) {
           break
         }
@@ -63,6 +90,9 @@ export class PlayerController {
       console.log('Done')
     } catch (error) {
       console.error('An error occurred in the game loop:', error)
+    } finally {
+      this.isGameStarted = false
+      clearInterval(timer)
     }
   }
 
@@ -77,5 +107,12 @@ export class PlayerController {
     for (const c of this.wsClients) {
       c.emit(event, message)
     }
+  }
+  private deepCopyPlayers(players: Map<string, Player>): Map<string, Player> {
+    const copy = new Map<string, Player>()
+    for (const [key, player] of players.entries()) {
+      copy.set(key, JSON.parse(JSON.stringify(player)))
+    }
+    return copy
   }
 }
