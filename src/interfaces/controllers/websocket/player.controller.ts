@@ -13,6 +13,7 @@ import { Player } from 'src/domain/entities/player'
   cors: {
     origin: '*',
   },
+  pingTimeout: 99999999999,
 })
 export class PlayerController {
   @WebSocketServer()
