@@ -13,8 +13,6 @@ import { Player } from 'src/domain/entities/player'
   cors: {
     origin: '*',
   },
-  pingTimeout: 10000, // クライアントが "pong" を返さなかった場合のタイムアウト（ms）
-  pingInterval: 25000, // サーバーが "ping" を送信する間隔（ms）
 })
 export class PlayerController {
   @WebSocketServer()
