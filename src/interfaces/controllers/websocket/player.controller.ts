@@ -52,21 +52,14 @@ export class PlayerController {
     try {
       const players = Array.from(this.players.values())
       const game = new Game({ players })
-      let lastTime = Date.now();
       while (true) {
-        const currentTime = Date.now();
-        const deltaTime = (currentTime - lastTime) / 1000; // 秒単位
-        lastTime = currentTime;
-      
-        game.loop(deltaTime); // deltaTime を基に更新
-        this.broadcast('stage', { boxes: game.boxes });
-      
+        game.loop()
+        this.broadcast('stage', { boxes: game.boxes })
+        await new Promise(resolve => setTimeout(resolve, 5))
         if (game.isGameOver()) {
-          break;
+          break
         }
-        await new Promise(resolve => setTimeout(resolve, 16));
       }
-
       console.log('Done')
     } catch (error) {
       console.error('An error occurred in the game loop:', error)

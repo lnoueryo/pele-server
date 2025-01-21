@@ -25,11 +25,11 @@ export class Box implements MovableObject {
     this.speed = params.speed
   }
 
-  moveOnIdle(deltaTime: number) {
-    this.x += this.speed * deltaTime
+  moveOnIdle() {
+    this.x += this.speed
     this.y +=
       Math.random() < MOVE_Y_PROBABILITY
-        ? Math.sin(this.speed) * Y_MOVE_SCALE * deltaTime
+        ? Math.sin(this.speed) * Y_MOVE_SCALE
         : 0;
   }
 
