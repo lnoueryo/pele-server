@@ -13,6 +13,8 @@ import { Player } from 'src/domain/entities/player'
   cors: {
     origin: '*',
   },
+  pingTimeout: 10000, // クライアントが "pong" を返さなかった場合のタイムアウト（ms）
+  pingInterval: 25000, // サーバーが "ping" を送信する間隔（ms）
 })
 export class PlayerController {
   @WebSocketServer()
@@ -22,11 +24,13 @@ export class PlayerController {
   players = new Map()
 
   handleConnection(client) {
+    console.log('connected')
     this.wsClients.push(client)
     client.emit('login', client.id)
   }
 
   handleDisconnect(client: any) {
+    console.log('disconnected')
     this.wsClients = this.wsClients.filter((c) => c !== client)
     this.players.delete(client.id)
     this.broadcast('join', Array.from(this.players.values()))
@@ -48,16 +52,22 @@ export class PlayerController {
     try {
       const players = Array.from(this.players.values())
       const game = new Game({ players })
-      let done = false
-      setTimeout(() => done = true, 5000)
+      const fixedInterval = 16
+      let lastTime = Date.now()
       while (true) {
-        game.loop()
-        this.broadcast('stage', { boxes: game.boxes })
-        await new Promise(resolve => setTimeout(resolve, 5))
+        const currentTime = Date.now()
+        const delta = currentTime - lastTime
+        if (delta >= fixedInterval) {
+          game.loop()
+          this.broadcast('stage', { boxes: game.boxes })
+          lastTime = currentTime
+        }
         if (game.isGameOver()) {
           break
         }
+        await new Promise(resolve => setTimeout(resolve, 1))
       }
+
       console.log('Done')
     } catch (error) {
       console.error('An error occurred in the game loop:', error)
