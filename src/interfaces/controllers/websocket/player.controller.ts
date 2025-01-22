@@ -33,6 +33,7 @@ export class PlayerController {
     console.log('disconnected')
     this.wsClients = this.wsClients.filter((c) => c !== client)
     this.players.delete(client.id)
+    console.log(this.wsClients.length)
     this.broadcast('join', Array.from(this.players.values()))
   }
 

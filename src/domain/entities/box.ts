@@ -1,7 +1,5 @@
-const MOVE_Y_PROBABILITY = 0.4;
-// const MOVE_Y_PROBABILITY = 0.2;
-const Y_MOVE_SCALE = 0.5;
-// const Y_MOVE_SCALE = 25;
+const MOVE_Y_PROBABILITY = 0.1;
+const Y_MOVE_SCALE = 4;
 
 type IBox = {
   x: number
@@ -26,7 +24,7 @@ export class Box implements MovableObject {
   }
 
   moveOnIdle() {
-    this.x += this.speed
+    this.x += Math.abs(this.speed)
     this.y +=
       Math.random() < MOVE_Y_PROBABILITY
         ? Math.sin(this.speed) * Y_MOVE_SCALE
