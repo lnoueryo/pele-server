@@ -32,9 +32,9 @@ export class Box implements MovableObject {
   }
 
   isOutOfDisplay() {
-    const OVER_LEFT_LIMIT = this.x > 1
-    const OVER_BOTTOM_LIMIT = this.y < 0
-    const OVER_TOP_LIMIT = this.y > 1
+    const OVER_LEFT_LIMIT = this.x - this.width > 1
+    const OVER_BOTTOM_LIMIT = this.y + this.height < 0
+    const OVER_TOP_LIMIT = this.y - this.height > 1
     return OVER_LEFT_LIMIT || OVER_BOTTOM_LIMIT || OVER_TOP_LIMIT
   }
 }
