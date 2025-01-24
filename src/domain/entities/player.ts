@@ -1,7 +1,3 @@
-const WIDTH = 40
-const HEIGHT = 40
-const FIRST_SPEED = 8
-
 export class Player implements MovableObject {
   public id
   public x
@@ -9,6 +5,9 @@ export class Player implements MovableObject {
   public width
   public height
   public speed
+  private vg: number
+  private jumpStrength: number
+  private color: string
   public isOver
   constructor(params: {
     id: string
@@ -17,6 +16,9 @@ export class Player implements MovableObject {
     width: number
     height: number
     speed: number
+    vg: number,
+    jumpStrength: number,
+    color: string
     isOver: boolean
   }) {
     this.id = params.id
@@ -25,6 +27,9 @@ export class Player implements MovableObject {
     this.width = params.width
     this.height = params.height
     this.speed = params.speed
+    this.vg = params.vg
+    this.jumpStrength = params.jumpStrength
+    this.color = params.color
     this.isOver = params.isOver
   }
 
@@ -35,7 +40,10 @@ export class Player implements MovableObject {
       y: this.y,
       width: this.width,
       height: this.height,
+      vg: this.vg,
       speed: this.speed,
+      jumpStrength: this.jumpStrength,
+      color: this.color,
       isOver: this.isOver,
     }
   }
@@ -59,18 +67,27 @@ export class Player implements MovableObject {
       width: params.width,
       height: params.height,
       speed: this.speed,
+      vg: this.vg,
+      jumpStrength: this.jumpStrength,
+      color: this.color,
       isOver: this.isOver,
     })
   }
 
-  static createPlayer = (id: string, { x, y }: { x: number, y: number}) => {
+  static createPlayer = (id: string) => {
+    const r = Math.floor(Math.random() * 255)
+    const g = Math.floor(Math.random() * 255)
+    const b = Math.floor(Math.random() * 255)
     return new Player({
       id,
-      x,
-      y,
-      width: WIDTH,
-      height: HEIGHT,
-      speed: FIRST_SPEED,
+      x: 0.5,
+      y: 0.1,
+      width: 0.05,
+      height: 0.05,
+      vg: 0.0009,
+      jumpStrength: -0.03,
+      speed: 0.02,
+      color: `rgb(${r},${g},${b})`,
       isOver: false,
     })
   }

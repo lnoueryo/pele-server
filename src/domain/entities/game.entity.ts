@@ -33,38 +33,8 @@ export class Game {
   }
 
   private createBox() {
-    const x = 0
-    const y = 0.17
-    const width = Math.random()
-    const height = getRandomWithMin(0.1) * 0.1
-    // const speed = getRandomWithMin(0.05) * 0.01
-    let speed = (Math.random() - 0.5) * 0.07
-    if (0 < speed && speed < 0.005) {
-      speed = 0.005
-    } else if (-0.005 < speed && speed < 0) {
-      speed = -0.005
-    }
-    if (0.015 < speed) {
-      speed = 0.015
-    } else if (speed < -0.015) {
-      speed = -0.015
-    }
-    console.log(speed)
-    // const speed = Math.random() * 0.01
-    const box = new Box({
-      x,
-      y,
-      width,
-      height,
-      speed,
-    })
+    const box = Box.createBox()
     this.boxes.push(box)
-    function getRandomWithMin(min) {
-      return Math.random() * (1 - min) + min;
-    }
-    function getRandomWithMax(max) {
-      return Math.random() * (1 - max) + max;
-    }
   }
 
   private deleteBox(box: Box) {

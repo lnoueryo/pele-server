@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
@@ -26,27 +27,23 @@ export class PlayerController {
   handleConnection(client) {
     console.log('connected')
     this.wsClients.push(client)
-    client.emit('login', client.id)
+    client.emit('connected', client.id)
   }
 
   handleDisconnect(client: any) {
     console.log('disconnected')
     this.wsClients = this.wsClients.filter((c) => c !== client)
     this.players.delete(client.id)
-    console.log(this.wsClients.length)
     this.broadcast('join', Array.from(this.players.values()))
-  }
-
-  @SubscribeMessage('ping')
-  handlePing(client: Socket) {
-    console.log(`Received ping from ${client.id}`)
-    client.emit('pong')
   }
 
   @SubscribeMessage('coordinate')
   async coordinate(@MessageBody() data: any) {
     try {
       const player = this.players.get(data.id)
+      if (!player) {
+        return
+      }
       player.updateFromJson(data)
       this.broadcast('coordinate', data)
     } catch (error) {
@@ -54,7 +51,10 @@ export class PlayerController {
     }
   }
   @SubscribeMessage('start')
-  async start(@MessageBody() data: any) {
+  async start(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: Socket,
+  ) {
     this.wsClients.forEach((client) => client.id !== data.id && client.emit('start'))
     if (this.isGameStarted) return
       this.isGameStarted = true
@@ -76,7 +76,7 @@ export class PlayerController {
       const game = new Game({ players })
       while (true) {
         game.loop()
-        const bb = game.boxes.map((box) => {
+        const boxes = game.boxes.map((box) => {
           const buffer = new ArrayBuffer(20) // 5つのFloat32 (4バイト * 5 = 20バイト)
           const view = new DataView(buffer)
           view.setFloat32(0, box.x)
@@ -84,10 +84,9 @@ export class PlayerController {
           view.setFloat32(8, box.width)
           view.setFloat32(12, box.height)
           view.setFloat32(16, box.speed)
-          return buffer // バッファを直接返す
+          return buffer
         })
-        this.broadcast('stage', bb)
-        // this.broadcast('stage', game.boxes)
+        this.broadcast('stage', boxes)
         await new Promise(resolve => setTimeout(resolve, 1000 / 60))
         if (game.isGameOver() || this.players.size === 0) {
           break
@@ -102,10 +101,15 @@ export class PlayerController {
     }
   }
 
-  @SubscribeMessage('login')
-  emitLoginMessage(@MessageBody() player: any) {
-    const playerObj = new Player(player.player)
-    this.players.set(player.clientId, playerObj)
+  @SubscribeMessage('create-player')
+  createPlayerMessage(
+    @MessageBody() id: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const player = this.players.get(id)
+    const playerObj = player || Player.createPlayer(id)
+    this.players.set(id, playerObj)
+    client.emit('create-player', playerObj.convertToJson())
     this.broadcast('join', Array.from(this.players.values()).map((player) => player.convertToJson()))
   }
 
