@@ -58,19 +58,19 @@ export class PlayerController {
     this.wsClients.forEach((client) => client.id !== data.id && client.emit('start'))
     if (this.isGameStarted) return
       this.isGameStarted = true
-      let cachePlayers = this.deepCopyPlayers(this.players)
-      const timer = setInterval(() => {
-        for (const [id, cachedPlayer] of cachePlayers.entries()) {
-          const currentPlayer = this.players.get(id)
-          if (!currentPlayer) {
-            return
-          } else if (currentPlayer.x === cachedPlayer.x && currentPlayer.y === cachedPlayer.y) {
-            currentPlayer.isOver = true
-            console.log(`isOver ${currentPlayer}`)
-          }
-        }
-        cachePlayers = this.deepCopyPlayers(this.players)
-      }, 5000)
+      // let cachePlayers = this.deepCopyPlayers(this.players)
+      // const timer = setInterval(() => {
+      //   for (const [id, cachedPlayer] of cachePlayers.entries()) {
+      //     const currentPlayer = this.players.get(id)
+      //     if (!currentPlayer) {
+      //       return
+      //     } else if (currentPlayer.x === cachedPlayer.x && currentPlayer.y === cachedPlayer.y) {
+      //       currentPlayer.isOver = true
+      //       console.log(`isOver ${currentPlayer}`)
+      //     }
+      //   }
+      //   cachePlayers = this.deepCopyPlayers(this.players)
+      // }, 5000)
     try {
       const players = Array.from(this.players.values())
       const game = new Game({ players })
@@ -97,7 +97,7 @@ export class PlayerController {
       console.error('An error occurred in the game loop:', error)
     } finally {
       this.isGameStarted = false
-      clearInterval(timer)
+      // clearInterval(timer)
     }
   }
 
