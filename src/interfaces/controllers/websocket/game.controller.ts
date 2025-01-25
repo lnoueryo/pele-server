@@ -16,7 +16,7 @@ import { Player } from 'src/domain/entities/player'
   },
   pingTimeout: 99999999,
 })
-export class PlayerController {
+export class GameController {
   @WebSocketServer()
   server: Server
 
