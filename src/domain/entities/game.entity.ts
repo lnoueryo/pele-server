@@ -1,4 +1,4 @@
-import { Player } from './player'
+import { Player } from './player.entity'
 import { Box } from './box'
 const PLAYER_START = 3000
 export class Game {
@@ -11,14 +11,8 @@ export class Game {
     this.players = params.players || []
   }
 
-  startGame = () => {
-    // this.loop(this.currentTime)
-    setTimeout(() => {
-
-    }, PLAYER_START)
-  }
-
   loop() {
+    // TODO: サーバー側で時間管理
     // this.currentTime = timestamp
     for (const box of this.boxes) {
       box.moveOnIdle()
@@ -29,7 +23,6 @@ export class Game {
     if (Math.random() < this.boxCreationProbability) {
       this.createBox()
     }
-
   }
 
   private createBox() {
@@ -57,5 +50,4 @@ export class Game {
   isGameOver() {
     return this.players.every((player) => player.isOver)
   }
-
 }

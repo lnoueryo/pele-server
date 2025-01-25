@@ -16,8 +16,8 @@ export class Player implements MovableObject {
     width: number
     height: number
     speed: number
-    vg: number,
-    jumpStrength: number,
+    vg: number
+    jumpStrength: number
     color: string
     isOver: boolean
   }) {
@@ -33,7 +33,18 @@ export class Player implements MovableObject {
     this.isOver = params.isOver
   }
 
-  convertToJson() {
+  convertToJson(): {
+    id: string
+    x: number
+    y: number
+    width: number
+    height: number
+    vg: number
+    speed: number
+    jumpStrength: number
+    color: string
+    isOver: boolean
+  } {
     return {
       id: this.id,
       x: this.x,
@@ -53,7 +64,7 @@ export class Player implements MovableObject {
     y: number
     width: number
     height: number
-    isOver: number
+    isOver: boolean
   }) {
     this.x = params.x
     this.y = params.y
@@ -84,9 +95,9 @@ export class Player implements MovableObject {
       y: 0.1,
       width: 0.05,
       height: 0.05,
-      vg: 0.0009,
-      jumpStrength: -0.03,
-      speed: 0.02,
+      vg: 0.0003,
+      jumpStrength: -0.015,
+      speed: 0.01,
       color: `rgb(${r},${g},${b})`,
       isOver: false,
     })

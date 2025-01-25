@@ -19,7 +19,7 @@ export class Box implements MovableObject {
   public width
   public height
   public speed
-  private ySalt = (Math.random() - 0.5)
+  private ySalt = Math.random() - 0.5
   constructor(params: IBox) {
     this.width = params.width
     this.height = params.height
@@ -32,7 +32,7 @@ export class Box implements MovableObject {
     this.x -= this.speed
     this.y +=
       Math.random() < MOVE_Y_PROBABILITY
-        ? this.ySalt * this.speed / Y_MOVE_SCALE
+        ? (this.ySalt * this.speed) / Y_MOVE_SCALE
         : 0
   }
 
@@ -48,7 +48,12 @@ export class Box implements MovableObject {
     const width = Math.random() * 0.25
     const height = Math.random() * 0.1
     const randomSpeed = Math.random()
-    const speed = randomSpeed < MIN_SPEED ? MIN_SPEED / SPEED_SALT : MAX_SPEED < randomSpeed ? MAX_SPEED / SPEED_SALT : randomSpeed / SPEED_SALT
+    const speed =
+      randomSpeed < MIN_SPEED
+        ? MIN_SPEED / SPEED_SALT
+        : MAX_SPEED < randomSpeed
+          ? MAX_SPEED / SPEED_SALT
+          : randomSpeed / SPEED_SALT
     return new Box({
       width,
       height,
