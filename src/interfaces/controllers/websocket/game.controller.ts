@@ -61,7 +61,7 @@ export class GameController {
       height: number
       isOver: boolean
     },
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
     this.updatePlayerUsecase.execute(body, new SocketIO(client))
   }

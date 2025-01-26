@@ -29,7 +29,7 @@ export class StartGameUsecase {
     try {
       const players = this.playerRepository.findAll()
       const game = new Game({ players })
-      let errorCount = 0
+      const errorCount = 0
       while (true) {
         try {
           game.loop()
