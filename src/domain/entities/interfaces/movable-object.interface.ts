@@ -1,4 +1,4 @@
-interface MovableObject {
+export interface MovableObject {
   width: number
   height: number
   x: number

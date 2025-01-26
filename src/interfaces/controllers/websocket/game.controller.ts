@@ -4,13 +4,11 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets'
-import { Server, Socket } from 'socket.io'
+import { Socket } from 'socket.io'
 import { Player } from 'src/domain/entities/player.entity'
 import { UpdatePlayerUsecase } from 'src/application/usecases/player/update-player.usecase'
-import { Inject } from '@nestjs/common'
 import { CreatePlayerUsecase } from 'src/application/usecases/player/create-player.usecase'
 import { StartGameUsecase } from 'src/application/usecases/player/start-game.usecase'
-import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
 import { SocketIO } from 'src/infrastructure/plugins/socket.io'
 import { ConnectWebsocketUsecase } from 'src/application/usecases/player/connect-websocket.usecase'
 import { DisconnectWebsocketUsecase } from 'src/application/usecases/player/disconnect-websocket.usecase'

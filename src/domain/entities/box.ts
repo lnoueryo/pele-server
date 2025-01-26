@@ -1,3 +1,5 @@
+import { MovableObject } from './interfaces/movable-object.interface'
+
 const MOVE_Y_PROBABILITY = 0.1
 const Y_MOVE_SCALE = 0.15
 const START_POSITION = 0.75

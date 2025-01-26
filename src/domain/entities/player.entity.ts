@@ -1,4 +1,5 @@
 import config from '../../config'
+import { MovableObject } from './interfaces/movable-object.interface'
 export class Player implements MovableObject {
   public id
   public x
