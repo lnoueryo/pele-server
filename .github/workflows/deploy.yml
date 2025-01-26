@@ -6,12 +6,39 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
-    name: Build and Deploy
+  lint-and-deploy:
+    name: Lint and Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # 必要に応じてバージョンを変更
+
+      # npm のキャッシュを使用して依存関係のインストールを高速化
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 依存関係のインストール
+      - name: Install dependencies
+        run: npm ci
+
+      # Lint の実行
+      - name: Run Lint
+        run: npm run lint
+
+      # Lint エラーがある場合はデプロイを停止
+      - name: Check Lint Status
+        if: failure()
+        run: exit 1
 
       - name: Setup Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.0
