@@ -29,7 +29,7 @@ export class StartGameUsecase {
     try {
       const players = this.playerRepository.findAll()
       const game = new Game({ players })
-      const errorCount = 0
+      let errorCount = 0
       while (true) {
         try {
           game.loop()
@@ -51,6 +51,7 @@ export class StartGameUsecase {
           }
         } catch (error) {
           Logger.warn(error)
+          errorCount++
           if (errorCount === MAX_ERROR_COUNT) {
             throw error
           }
