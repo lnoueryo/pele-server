@@ -1,6 +1,6 @@
 import { Player } from './player.entity'
 import { Box } from './box'
-const PLAYER_START = 3000
+
 export class Game {
   private players
   public boxes: Box[] = []

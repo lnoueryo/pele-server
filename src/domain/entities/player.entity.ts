@@ -1,3 +1,5 @@
+import config from '../../config'
+import { MovableObject } from './interfaces/movable-object.interface'
 export class Player implements MovableObject {
   public id
   public x
@@ -91,13 +93,7 @@ export class Player implements MovableObject {
     const b = Math.floor(Math.random() * 255)
     return new Player({
       id,
-      x: 0.5,
-      y: 0.1,
-      width: 0.05,
-      height: 0.05,
-      vg: 0.0003,
-      jumpStrength: -0.015,
-      speed: 0.01,
+      ...config.playerSetting,
       color: `rgb(${r},${g},${b})`,
       isOver: false,
     })

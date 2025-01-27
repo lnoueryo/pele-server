@@ -1,9 +1,9 @@
-name: Deploy to Google Cloud Run - Production
+name: Deploy to Google Cloud Run - staging
 
 on:
   push:
     branches:
-      - master
+      - develop
 
 jobs:
   lint-and-deploy:
@@ -46,7 +46,7 @@ jobs:
 
       - name: Deploy to Google Cloud Run - Production
         run: |
-          gcloud run deploy pele-server-prod \
+          gcloud run deploy pele-server-stg \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/pele-server:${{ github.sha }} \
             --platform managed \
             --region asia-northeast1 \

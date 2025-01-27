@@ -51,6 +51,7 @@ export class StartGameUsecase {
           }
         } catch (error) {
           Logger.warn(error)
+          errorCount++
           if (errorCount === MAX_ERROR_COUNT) {
             throw error
           }

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { Socket } from 'socket.io'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import { SocketIO } from '../plugins/socket.io'
 

@@ -21,7 +21,7 @@ export class UpdatePlayerUsecase {
       height: number
       isOver: boolean
     },
-    client: SocketIO
+    client: SocketIO,
   ): UsecaseResult<boolean, 'not-found' | 'internal'> {
     try {
       const player = this.playerRepository.findById(body.id)
@@ -36,7 +36,9 @@ export class UpdatePlayerUsecase {
         }
       }
       player.updateFromJson(body)
-      this.websocketGameRepository.updatePosition(player, { excludeClient: client })
+      this.websocketGameRepository.updatePosition(player, {
+        excludeClient: client,
+      })
       return {
         success: true,
       }
