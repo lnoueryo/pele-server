@@ -1,12 +1,10 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
 import { Game } from 'src/domain/entities/game.entity'
-import { IWebsocketClient } from 'src/domain/entities/interfaces/websocket-client.interface'
 import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
 import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
 import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import config from '../../../config'
-import { timestamp } from 'rxjs'
 
 const MAX_ERROR_COUNT = 10
 
@@ -22,7 +20,6 @@ export class StartGameUsecase {
     private readonly websocketClientRepository: IWebsocketClientRepository,
   ) {}
   async execute(
-    client: IWebsocketClient,
   ): Promise<UsecaseResult<true, 'internal'>> {
     // TODO: サービスに切り出す　存在してないプレイヤーの処理
     const clients = this.websocketClientRepository.findAll()

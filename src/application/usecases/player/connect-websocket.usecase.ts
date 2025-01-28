@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { IWebsocketClient } from 'src/domain/entities/interfaces/websocket-client.interface'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 

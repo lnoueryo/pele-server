@@ -64,7 +64,7 @@ export class GameController {
   }
 
   @SubscribeMessage('start')
-  async startGame(@ConnectedSocket() client: Socket) {
-    await this.startGameUsecase.execute(new SocketIO(client))
+  async startGame() {
+    await this.startGameUsecase.execute()
   }
 }
