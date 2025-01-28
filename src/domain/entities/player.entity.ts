@@ -1,7 +1,9 @@
-import config from '../../config'
 import { MovableObject } from './interfaces/movable-object.interface'
+import { PlayerSetting } from './interfaces/player-setting.interface'
 export class Player implements MovableObject {
   public id
+  public name
+  public clientId
   public x
   public y
   public width
@@ -13,6 +15,8 @@ export class Player implements MovableObject {
   public isOver
   constructor(params: {
     id: string
+    name: string
+    clientId: string
     x: number
     y: number
     width: number
@@ -24,6 +28,8 @@ export class Player implements MovableObject {
     isOver: boolean
   }) {
     this.id = params.id
+    this.name = params.name
+    this.clientId = params.clientId
     this.x = params.x
     this.y = params.y
     this.width = params.width
@@ -37,6 +43,7 @@ export class Player implements MovableObject {
 
   convertToJson(): {
     id: string
+    clientId: string
     x: number
     y: number
     width: number
@@ -49,6 +56,7 @@ export class Player implements MovableObject {
   } {
     return {
       id: this.id,
+      clientId: this.clientId,
       x: this.x,
       y: this.y,
       width: this.width,
@@ -75,6 +83,8 @@ export class Player implements MovableObject {
     this.isOver = params.isOver
     return new Player({
       id: this.id,
+      name: this.name,
+      clientId: this.clientId,
       x: params.x,
       y: params.y,
       width: params.width,
@@ -87,13 +97,30 @@ export class Player implements MovableObject {
     })
   }
 
-  static createPlayer = (id: string) => {
+  reset(playerSetting: PlayerSetting) {
+    this.x = playerSetting.x
+    this.y = playerSetting.y
+    this.width = playerSetting.width
+    this.height = playerSetting.height
+    this.vg = playerSetting.vg
+    this.speed = playerSetting.speed
+    this.jumpStrength = playerSetting.jumpStrength
+  }
+
+  static createPlayer = (
+    id: string,
+    name: string,
+    clientId: string,
+    playerSetting: PlayerSetting,
+  ) => {
     const r = Math.floor(Math.random() * 255)
     const g = Math.floor(Math.random() * 255)
     const b = Math.floor(Math.random() * 255)
     return new Player({
       id,
-      ...config.playerSetting,
+      name,
+      clientId,
+      ...playerSetting,
       color: `rgb(${r},${g},${b})`,
       isOver: false,
     })

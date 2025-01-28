@@ -5,6 +5,7 @@ import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClient } from 'src/domain/entities/interfaces/websocket-client.interface'
 import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
+import config from '../../../config'
 
 @Injectable()
 export class CreatePlayerUsecase {
@@ -17,7 +18,7 @@ export class CreatePlayerUsecase {
     private readonly websocketClientRepository: IWebsocketClientRepository,
   ) {}
   execute(
-    id: string,
+    user: { uid: string; displayName: string },
     client: IWebsocketClient,
   ): UsecaseResult<
     {
@@ -32,12 +33,17 @@ export class CreatePlayerUsecase {
     'internal'
   > {
     try {
-      const player = this.playerRepository.findById(id)
-      const newPlayer = player || Player.createPlayer(id)
+      const player = this.playerRepository.findById(user.uid)
+      const newPlayer =
+        player ||
+        Player.createPlayer(
+          user.uid,
+          user.displayName,
+          client.id,
+          config.playerSetting,
+        )
+      Logger.log(newPlayer.convertToJson())
       this.playerRepository.save(newPlayer)
-      this.websocketGameRepository.createPlayer(newPlayer, {
-        clients: [client],
-      })
       const players = this.playerRepository.findAll()
       const clients = this.websocketClientRepository.findAll()
       this.websocketGameRepository.acceptPlayer(players, { clients })

@@ -1,11 +1,21 @@
 import { MovableObject } from './interfaces/movable-object.interface'
-
-const MOVE_Y_PROBABILITY = 0.1
-const Y_MOVE_SCALE = 0.15
-const START_POSITION = 0.75
-const SPEED_SALT = 25
-const MIN_SPEED = 0.3
-const MAX_SPEED = 0.6
+import config from '../../config'
+export type BoxSetting = {
+  moveYProbability: number
+  yMoveScale: number
+  startPosition: number
+  speedSalt: number
+  minSpeed: number
+  maxSpeed: number
+}
+const {
+  moveYProbability: MOVE_Y_PROBABILITY,
+  yMoveScale: Y_MOVE_SCALE,
+  startPosition: START_POSITION,
+  speedSalt: SPEED_SALT,
+  minSpeed: MIN_SPEED,
+  maxSpeed: MAX_SPEED,
+} = config.boxSetting
 
 type IBox = {
   x: number
@@ -30,11 +40,11 @@ export class Box implements MovableObject {
     this.speed = params.speed
   }
 
-  moveOnIdle() {
-    this.x -= this.speed
+  moveOnIdle(deltaTime: number) {
+    this.x -= this.speed * deltaTime
     this.y +=
       Math.random() < MOVE_Y_PROBABILITY
-        ? (this.ySalt * this.speed) / Y_MOVE_SCALE
+        ? (this.ySalt * this.speed * deltaTime) / Y_MOVE_SCALE
         : 0
   }
 
