@@ -18,7 +18,7 @@ export class CreatePlayerUsecase {
     private readonly websocketClientRepository: IWebsocketClientRepository,
   ) {}
   execute(
-    user: { uid: string, displayName: string },
+    user: { uid: string; displayName: string },
     client: IWebsocketClient,
   ): UsecaseResult<
     {
@@ -34,7 +34,15 @@ export class CreatePlayerUsecase {
   > {
     try {
       const player = this.playerRepository.findById(user.uid)
-      const newPlayer = player || Player.createPlayer(user.uid, user.displayName, client.id, config.playerSetting)
+      const newPlayer =
+        player ||
+        Player.createPlayer(
+          user.uid,
+          user.displayName,
+          client.id,
+          config.playerSetting,
+        )
+      Logger.log(newPlayer.convertToJson())
       this.playerRepository.save(newPlayer)
       const players = this.playerRepository.findAll()
       const clients = this.websocketClientRepository.findAll()

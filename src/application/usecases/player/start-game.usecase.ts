@@ -6,6 +6,7 @@ import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game
 import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import config from '../../../config'
+import { timestamp } from 'rxjs'
 
 const MAX_ERROR_COUNT = 10
 
@@ -34,11 +35,15 @@ export class StartGameUsecase {
       const players = this.playerRepository.findAll()
       const game = new Game({ players })
       let errorCount = 0
+      let lastTimestamp = 0
       while (true) {
         try {
-          game.loop()
+          const currentTimestamp = Date.now()
+          const deltaTime = (currentTimestamp - lastTimestamp) / 1000
+          lastTimestamp = currentTimestamp
+          game.loop(deltaTime)
           const boxes = game.boxes.map((box) => {
-            const buffer = new ArrayBuffer(20) // 5つのFloat32 (4バイト * 5 = 20バイト)
+            const buffer = new ArrayBuffer(20)
             const view = new DataView(buffer)
             view.setFloat32(0, box.x)
             view.setFloat32(4, box.y)

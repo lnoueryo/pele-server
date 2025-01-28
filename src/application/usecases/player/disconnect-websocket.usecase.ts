@@ -17,8 +17,8 @@ export class DisconnectWebsocketUsecase {
   execute(client: IWebsocketClient) {
     try {
       this.websocketClientRepository.delete(client.id)
-      this.playerRepository.findByClientId(client.id)
-      this.playerRepository.delete(client.id)
+      const player = this.playerRepository.findByClientId(client.id)
+      this.playerRepository.delete(player.id)
       Logger.log(`disconnected ${client.id}`)
       const clients = this.websocketClientRepository.findAll()
       const players = this.playerRepository.findAll()

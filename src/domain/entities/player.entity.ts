@@ -107,7 +107,12 @@ export class Player implements MovableObject {
     this.jumpStrength = playerSetting.jumpStrength
   }
 
-  static createPlayer = (id: string, name: string, clientId: string, playerSetting: PlayerSetting) => {
+  static createPlayer = (
+    id: string,
+    name: string,
+    clientId: string,
+    playerSetting: PlayerSetting,
+  ) => {
     const r = Math.floor(Math.random() * 255)
     const g = Math.floor(Math.random() * 255)
     const b = Math.floor(Math.random() * 255)

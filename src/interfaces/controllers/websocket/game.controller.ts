@@ -38,7 +38,7 @@ export class GameController {
 
   @SubscribeMessage('player')
   createPlayerMessage(
-    @MessageBody() user: { uid: string, displayName: string},
+    @MessageBody() user: { uid: string; displayName: string },
     @ConnectedSocket() client: Socket,
   ) {
     const result = this.createPlayerUsecase.execute(user, new SocketIO(client))
@@ -67,5 +67,4 @@ export class GameController {
   async startGame(@ConnectedSocket() client: Socket) {
     await this.startGameUsecase.execute(new SocketIO(client))
   }
-
 }

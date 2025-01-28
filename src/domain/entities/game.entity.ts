@@ -4,18 +4,18 @@ import { Box } from './box.entity'
 export class Game {
   private players
   public boxes: Box[] = []
-  private boxCreationProbability = 0.08
+  private boxCreationProbability = 0.075
   public startTime: number = 0
   public currentTime: number = 0
+  public lastTimestamp: number = 0
   constructor(params: { players: Player[] }) {
     this.players = params.players || []
   }
 
-  loop() {
+  loop(deltaTime: number) {
     // TODO: サーバー側で時間管理
-    // this.currentTime = timestamp
     for (const box of this.boxes) {
-      box.moveOnIdle()
+      box.moveOnIdle(deltaTime)
       if (box.isOutOfDisplay()) {
         this.deleteBox(box)
       }

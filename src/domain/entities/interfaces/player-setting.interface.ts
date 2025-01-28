@@ -1,4 +1,4 @@
-export type PlayerSetting =  {
+export type PlayerSetting = {
   x: number
   y: number
   width: number

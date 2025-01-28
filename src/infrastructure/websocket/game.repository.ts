@@ -50,7 +50,7 @@ export class WebsocketGameRepository implements IWebsocketGameRepository {
   updatePosition(player: Player, options: ClientOption) {
     this.send('position', player.convertToJson(), options)
   }
-  startGame(players: Player[],options?: ClientOption) {
+  startGame(players: Player[], options?: ClientOption) {
     this.send('start', players, options)
   }
   updateStage(boxes: ArrayBuffer[], options: ClientOption) {

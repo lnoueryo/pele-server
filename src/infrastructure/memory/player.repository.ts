@@ -16,7 +16,7 @@ export class PlayerRepository implements IPlayerRepository {
   }
 
   findByClientId(clientId: string): Player | null {
-    return this.findAll().find(player => player.clientId === clientId)
+    return this.findAll().find((player) => player.clientId === clientId)
   }
 
   save(player: Player): void {
@@ -32,7 +32,7 @@ export class PlayerRepository implements IPlayerRepository {
   }
 
   reset(playerSetting: PlayerSetting) {
-    this.findAll().forEach(player => {
+    this.findAll().forEach((player) => {
       player.reset(playerSetting)
     })
   }

@@ -1,8 +1,10 @@
 import * as dotenv from 'dotenv'
 import type { PlayerSetting } from './domain/entities/interfaces/player-setting.interface'
+import { BoxSetting } from './domain/entities/box.entity'
 dotenv.config()
 type Config = {
   playerSetting: PlayerSetting
+  boxSetting: BoxSetting
 }
 const playerSetting = process.env.PLAYER_SETTING
   ? JSON.parse(process.env.PLAYER_SETTING)
@@ -11,13 +13,24 @@ const playerSetting = process.env.PLAYER_SETTING
       y: 0.1,
       width: 0.05,
       height: 0.05,
-      vg: 0.0009,
-      speed: 0.015,
-      jumpStrength: -0.027,
+      vg: 2,
+      speed: 1.1,
+      jumpStrength: -1.1,
+    }
+const boxSetting = process.env.BOX_SETTING
+  ? JSON.parse(process.env.BOX_SETTING)
+  : {
+      moveYProbability: 0.1,
+      yMoveScale: 0.15,
+      startPosition: 0.75,
+      speedSalt: 0.75,
+      minSpeed: 0.3,
+      maxSpeed: 0.6,
     }
 
 const config: Config = {
   playerSetting,
+  boxSetting,
 }
 type ConfigEnv = {
   httpApiOrigin: string
