@@ -8,14 +8,8 @@ export class ConnectWebsocketUsecase {
   constructor(
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
-    @Inject(forwardRef(() => IWebsocketGameRepository))
-    private readonly websocketGameRepository: IWebsocketGameRepository,
   ) {}
   execute(client: IWebsocketClient) {
     this.websocketClientRepository.save(client)
-    this.websocketGameRepository.connectWebsocket(client.id, {
-      clients: [client],
-    })
-    Logger.log(`connected: ${client.id}`)
   }
 }

@@ -58,9 +58,6 @@ export class WebsocketGameRepository implements IWebsocketGameRepository {
   updateStage(boxes: ArrayBuffer[], options: ClientOption) {
     this.send('stage', { boxes }, options)
   }
-  connectWebsocket(socketId: string, options: ClientOption) {
-    this.send('connected', socketId, options)
-  }
   private send<K extends keyof GameEventMap>(
     event: K,
     payload: GameEventMap[K],

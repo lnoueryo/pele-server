@@ -11,5 +11,4 @@ export type IWebsocketGameRepository = {
   updatePosition(player: Player, options: ClientOption): void
   startGame(options?: ClientOption): void
   updateStage(boxes: ArrayBuffer[], options: ClientOption): void
-  connectWebsocket(socketId: string, options: ClientOption): void
 }
