@@ -15,6 +15,10 @@ export class PlayerRepository implements IPlayerRepository {
     return this.players.get(id) || null
   }
 
+  findByClientId(clientId: string): Player | null {
+    return this.findAll().find(player => player.clientId === clientId)
+  }
+
   save(player: Player): void {
     this.players.set(player.id, player)
   }
