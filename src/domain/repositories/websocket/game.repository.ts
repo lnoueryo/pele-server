@@ -9,6 +9,6 @@ export const IWebsocketGameRepository = Symbol('IWebsocketGameRepository')
 export type IWebsocketGameRepository = {
   acceptPlayer(players: Player[], options: ClientOption): void
   updatePosition(player: Player, options: ClientOption): void
-  startGame(options?: ClientOption): void
+  startGame(players: Player[], options?: ClientOption): void
   updateStage(boxes: ArrayBuffer[], options: ClientOption): void
 }

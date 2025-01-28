@@ -16,7 +16,7 @@ type PlayerData = {
   isOver: boolean
 }
 type GameEventMap = {
-  start: undefined
+  start: Player[]
   connected: string
   stage: {
     boxes: ArrayBuffer[]
@@ -41,8 +41,6 @@ type GameEventMap = {
 export class WebsocketGameRepository implements IWebsocketGameRepository {
   constructor() {}
   acceptPlayer(players: Player[], options?: ClientOption) {
-    console.log('players')
-    console.log(players)
     this.send(
       'join',
       players.map((player) => player.convertToJson()),
@@ -52,8 +50,8 @@ export class WebsocketGameRepository implements IWebsocketGameRepository {
   updatePosition(player: Player, options: ClientOption) {
     this.send('position', player.convertToJson(), options)
   }
-  startGame(options?: ClientOption) {
-    this.send('start', undefined, options)
+  startGame(players: Player[],options?: ClientOption) {
+    this.send('start', players, options)
   }
   updateStage(boxes: ArrayBuffer[], options: ClientOption) {
     this.send('stage', { boxes }, options)

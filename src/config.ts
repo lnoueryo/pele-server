@@ -1,15 +1,8 @@
 import * as dotenv from 'dotenv'
+import type { PlayerSetting } from './domain/entities/interfaces/player-setting.interface'
 dotenv.config()
 type Config = {
-  playerSetting: {
-    x: number
-    y: number
-    width: number
-    height: number
-    vg: number
-    speed: number
-    jumpStrength: number
-  }
+  playerSetting: PlayerSetting
 }
 const playerSetting = process.env.PLAYER_SETTING
   ? JSON.parse(process.env.PLAYER_SETTING)

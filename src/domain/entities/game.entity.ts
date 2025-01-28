@@ -1,5 +1,5 @@
 import { Player } from './player.entity'
-import { Box } from './box'
+import { Box } from './box.entity'
 
 export class Game {
   private players
