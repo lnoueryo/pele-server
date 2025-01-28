@@ -49,9 +49,6 @@ export class WebsocketGameRepository implements IWebsocketGameRepository {
       options,
     )
   }
-  createPlayer(player: Player, options: ClientOption) {
-    this.send('player', player.convertToJson(), options)
-  }
   updatePosition(player: Player, options: ClientOption) {
     this.send('position', player.convertToJson(), options)
   }

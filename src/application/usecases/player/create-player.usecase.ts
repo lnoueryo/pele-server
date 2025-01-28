@@ -35,9 +35,6 @@ export class CreatePlayerUsecase {
       const player = this.playerRepository.findById(id)
       const newPlayer = player || Player.createPlayer(id)
       this.playerRepository.save(newPlayer)
-      this.websocketGameRepository.createPlayer(newPlayer, {
-        clients: [client],
-      })
       const players = this.playerRepository.findAll()
       const clients = this.websocketClientRepository.findAll()
       this.websocketGameRepository.acceptPlayer(players, { clients })
