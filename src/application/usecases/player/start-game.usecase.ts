@@ -20,8 +20,7 @@ export class StartGameUsecase {
     private readonly websocketClientRepository: IWebsocketClientRepository,
     private readonly playerService: PlayerService,
   ) {}
-  async execute(
-  ): Promise<UsecaseResult<true, 'internal'>> {
+  async execute(): Promise<UsecaseResult<true, 'internal'>> {
     // TODO: サービスに切り出す　存在してないプレイヤーの処理
     const clients = this.websocketClientRepository.findAll()
     this.playerService.resetPosition()

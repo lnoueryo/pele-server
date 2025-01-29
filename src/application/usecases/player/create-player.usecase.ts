@@ -17,7 +17,7 @@ export class CreatePlayerUsecase {
     private websocketGameRepository: IWebsocketGameRepository,
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
-    private readonly playerService: PlayerService
+    private readonly playerService: PlayerService,
   ) {}
   execute(
     user: { uid: string; displayName: string },

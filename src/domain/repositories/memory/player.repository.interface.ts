@@ -1,4 +1,3 @@
-import { PlayerSetting } from 'src/domain/entities/interfaces/player-setting.interface'
 import { Player } from 'src/domain/entities/player.entity'
 export const IPlayerRepository = Symbol('IPlayerRepository')
 export type IPlayerRepository = {
