@@ -51,7 +51,7 @@ export class StartGameUsecase {
           })
           const clients = this.websocketClientRepository.findAll()
           this.websocketGameRepository.updateStage(boxes, { clients })
-          await new Promise((resolve) => setTimeout(resolve, 1000 / 60))
+          await new Promise((resolve) => setTimeout(resolve, 1000 / 100))
           if (game.isGameOver() || players.length === 0) {
             break
           }
