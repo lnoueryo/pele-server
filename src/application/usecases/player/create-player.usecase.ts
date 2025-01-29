@@ -42,7 +42,6 @@ export class CreatePlayerUsecase {
           client.id,
           config.playerSetting,
         )
-      Logger.log(newPlayer.convertToJson())
       this.playerRepository.save(newPlayer)
       const players = this.playerRepository.findAll()
       const clients = this.websocketClientRepository.findAll()
