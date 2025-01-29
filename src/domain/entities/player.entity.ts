@@ -105,6 +105,7 @@ export class Player implements MovableObject {
     this.vg = playerSetting.vg
     this.speed = playerSetting.speed
     this.jumpStrength = playerSetting.jumpStrength
+    this.isOver = false
   }
 
   static createPlayer = (
