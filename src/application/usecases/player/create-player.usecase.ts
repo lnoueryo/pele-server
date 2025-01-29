@@ -6,6 +6,7 @@ import { IWebsocketClient } from 'src/domain/entities/interfaces/websocket-clien
 import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import config from '../../../config'
+import { PlayerService } from 'src/domain/services/player.service'
 
 @Injectable()
 export class CreatePlayerUsecase {
@@ -16,6 +17,7 @@ export class CreatePlayerUsecase {
     private websocketGameRepository: IWebsocketGameRepository,
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
+    private readonly playerService: PlayerService
   ) {}
   execute(
     user: { uid: string; displayName: string },
@@ -43,7 +45,7 @@ export class CreatePlayerUsecase {
           config.playerSetting,
         )
       this.playerRepository.save(newPlayer)
-      const players = this.playerRepository.findAll()
+      const players = this.playerService.arrangePosition()
       const clients = this.websocketClientRepository.findAll()
       this.websocketGameRepository.acceptPlayer(players, { clients })
       return {

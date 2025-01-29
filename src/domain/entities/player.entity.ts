@@ -44,6 +44,7 @@ export class Player implements MovableObject {
   convertToJson(): {
     id: string
     clientId: string
+    name: string
     x: number
     y: number
     width: number
@@ -57,6 +58,7 @@ export class Player implements MovableObject {
     return {
       id: this.id,
       clientId: this.clientId,
+      name: this.name,
       x: this.x,
       y: this.y,
       width: this.width,

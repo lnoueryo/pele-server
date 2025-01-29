@@ -8,5 +8,4 @@ export type IPlayerRepository = {
   save(player: Player): void
   delete(id: string): void
   exists(id: string): boolean
-  reset(playerSetting: PlayerSetting): void
 }
