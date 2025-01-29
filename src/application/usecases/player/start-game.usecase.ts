@@ -4,7 +4,7 @@ import { IPlayerRepository } from 'src/domain/repositories/memory/player.reposit
 import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
 import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
-import config from '../../../config'
+import { PlayerService } from 'src/domain/services/player.service'
 
 const MAX_ERROR_COUNT = 10
 
@@ -18,13 +18,13 @@ export class StartGameUsecase {
     private readonly websocketGameRepository: IWebsocketGameRepository,
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
+    private readonly playerService: PlayerService,
   ) {}
-  async execute(
-  ): Promise<UsecaseResult<true, 'internal'>> {
+  async execute(): Promise<UsecaseResult<true, 'internal'>> {
     // TODO: サービスに切り出す　存在してないプレイヤーの処理
     const clients = this.websocketClientRepository.findAll()
-    this.playerRepository.reset(config.playerSetting)
-    const players = this.playerRepository.findAll()
+    this.playerService.resetPosition()
+    const players = this.playerService.arrangePosition()
     this.websocketGameRepository.startGame(players, { clients })
     if (this.isGameRunning) return { success: true }
     this.isGameRunning = true

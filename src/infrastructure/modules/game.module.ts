@@ -12,6 +12,7 @@ import { IPlayerRepository } from 'src/domain/repositories/memory/player.reposit
 import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import { DisconnectWebsocketUsecase } from 'src/application/usecases/player/disconnect-websocket.usecase'
+import { PlayerService } from 'src/domain/services/player.service'
 
 @Module({
   providers: [
@@ -21,6 +22,7 @@ import { DisconnectWebsocketUsecase } from 'src/application/usecases/player/disc
     StartGameUsecase,
     ConnectWebsocketUsecase,
     DisconnectWebsocketUsecase,
+    PlayerService,
     {
       provide: IPlayerRepository,
       useClass: PlayerRepository,
