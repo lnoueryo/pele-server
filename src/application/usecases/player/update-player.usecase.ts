@@ -1,16 +1,16 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
 import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
 import { UsecaseResult } from './shared/usecase-result'
-import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
-import { SocketIO } from 'src/infrastructure/plugins/socket.io'
+import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
+import { IWebsocketClient } from 'src/domain/entities/interfaces/websocket-client.interface'
 
 @Injectable()
 export class UpdatePlayerUsecase {
   constructor(
     @Inject(forwardRef(() => IPlayerRepository))
-    private playerRepository: IPlayerRepository,
-    @Inject(forwardRef(() => IWebsocketGameRepository))
-    private readonly websocketGameRepository: IWebsocketGameRepository,
+    private readonly playerRepository: IPlayerRepository,
+    @Inject(forwardRef(() => IGameNotifier))
+    private readonly gameNotifier: IGameNotifier,
   ) {}
   execute(
     body: {
@@ -21,7 +21,7 @@ export class UpdatePlayerUsecase {
       height: number
       isOver: boolean
     },
-    client: SocketIO,
+    client: IWebsocketClient,
   ): UsecaseResult<boolean, 'not-found' | 'internal'> {
     try {
       const player = this.playerRepository.findById(body.id)
@@ -36,7 +36,7 @@ export class UpdatePlayerUsecase {
         }
       }
       player.updateFromJson(body)
-      this.websocketGameRepository.updatePosition(player, {
+      this.gameNotifier.updatePosition(player, {
         excludeClient: client,
       })
       return {

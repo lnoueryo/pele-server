@@ -5,14 +5,15 @@ import { UpdatePlayerUsecase } from 'src/application/usecases/player/update-play
 import { Server } from 'socket.io'
 import { PlayerRepository } from '../memory/player.repository'
 import { StartGameUsecase } from 'src/application/usecases/player/start-game.usecase'
-import { WebsocketGameRepository } from '../websocket/game.repository'
+import { GameNotifier } from '../websocket/game.notifier'
 import { WebsocketClientRepository } from '../memory/websocket-client.repository'
 import { ConnectWebsocketUsecase } from 'src/application/usecases/player/connect-websocket.usecase'
 import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
-import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import { DisconnectWebsocketUsecase } from 'src/application/usecases/player/disconnect-websocket.usecase'
-import { PlayerService } from 'src/domain/services/player.service'
+import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
+import { GameSetupService } from 'src/domain/services/game/game-setup.service'
+import { GameStartService } from 'src/domain/services/game/game-start.service'
 
 @Module({
   providers: [
@@ -22,14 +23,15 @@ import { PlayerService } from 'src/domain/services/player.service'
     StartGameUsecase,
     ConnectWebsocketUsecase,
     DisconnectWebsocketUsecase,
-    PlayerService,
+    GameSetupService,
+    GameStartService,
     {
       provide: IPlayerRepository,
       useClass: PlayerRepository,
     },
     {
-      provide: IWebsocketGameRepository,
-      useClass: WebsocketGameRepository,
+      provide: IGameNotifier,
+      useClass: GameNotifier,
     },
     {
       provide: IWebsocketClientRepository,
@@ -38,8 +40,4 @@ import { PlayerService } from 'src/domain/services/player.service'
     Server,
   ],
 })
-// websocketClientRepository
-// websocketGameRepository
-// playerRepository
-// websocketGameRepository
 export class GameModule {}

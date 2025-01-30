@@ -1,8 +1,8 @@
 import { Player } from 'src/domain/entities/player.entity'
 import {
   ClientOption,
-  IWebsocketGameRepository,
-} from 'src/domain/repositories/websocket/game.repository'
+  IGameNotifier,
+} from 'src/domain/notifiers/game.notifier.interface'
 type PlayerData = {
   id: string
   x: number
@@ -38,7 +38,7 @@ type GameEventMap = {
     }
   }
 }
-export class WebsocketGameRepository implements IWebsocketGameRepository {
+export class GameNotifier implements IGameNotifier {
   constructor() {}
   acceptPlayer(players: Player[], options?: ClientOption) {
     this.send(
@@ -53,8 +53,8 @@ export class WebsocketGameRepository implements IWebsocketGameRepository {
   startGame(players: Player[], options?: ClientOption) {
     this.send('start', players, options)
   }
-  updateStage(boxes: ArrayBuffer[], options: ClientOption) {
-    this.send('stage', { boxes }, options)
+  updateStage(stage: { boxes: ArrayBuffer[] }, options: ClientOption) {
+    this.send('stage', stage, options)
   }
   private send<K extends keyof GameEventMap>(
     event: K,

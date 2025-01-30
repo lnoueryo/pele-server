@@ -2,14 +2,14 @@ import { Player } from './player.entity'
 import { Box } from './box.entity'
 
 export class Game {
-  private players
-  public boxes: Box[] = []
+  private _players
+  private _boxes: Box[] = []
   private boxCreationProbability = 0.075
   public startTime: number = 0
   public currentTime: number = 0
   public lastTimestamp: number = 0
   constructor(params: { players: Player[] }) {
-    this.players = params.players || []
+    this._players = params.players || []
   }
 
   loop(deltaTime: number) {
@@ -49,5 +49,17 @@ export class Game {
 
   isGameOver() {
     return this.players.every((player) => player.isOver)
+  }
+
+  isNoPlayer() {
+    return this.players.length === 0
+  }
+
+  get players() {
+    return this._players
+  }
+
+  get boxes() {
+    return this._boxes
   }
 }

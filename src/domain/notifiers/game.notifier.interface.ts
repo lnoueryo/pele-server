@@ -5,10 +5,10 @@ export type ClientOption =
   | { excludeClient: IWebsocketClient }
   | { clients: IWebsocketClient[] }
 
-export const IWebsocketGameRepository = Symbol('IWebsocketGameRepository')
-export type IWebsocketGameRepository = {
+export const IGameNotifier = Symbol('IGameNotifier')
+export type IGameNotifier = {
   acceptPlayer(players: Player[], options: ClientOption): void
   updatePosition(player: Player, options: ClientOption): void
   startGame(players: Player[], options?: ClientOption): void
-  updateStage(boxes: ArrayBuffer[], options: ClientOption): void
+  updateStage(stage: { boxes: ArrayBuffer[] }, options: ClientOption): void
 }
