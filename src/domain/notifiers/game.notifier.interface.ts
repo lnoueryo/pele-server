@@ -7,8 +7,18 @@ export type ClientOption =
 
 export const IGameNotifier = Symbol('IGameNotifier')
 export type IGameNotifier = {
-  acceptPlayer(players: Player[], options: ClientOption): void
-  updatePosition(player: Player, options: ClientOption): void
+  acceptPlayer(players: Player[], options?: ClientOption): void
+  updatePosition(player: Player, options?: ClientOption): void
   startGame(players: Player[], options?: ClientOption): void
-  updateStage(stage: { boxes: ArrayBuffer[] }, options: ClientOption): void
+  updateStage(
+    stage: { boxes: ArrayBuffer[]; currentTimestamp: number },
+    options?: ClientOption,
+  ): void
+  endGame(
+    endData: {
+      ranking: { name: string; timestamp: number }[]
+      startTimestamp: number
+    },
+    options?: ClientOption,
+  )
 }

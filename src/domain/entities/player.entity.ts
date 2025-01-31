@@ -1,5 +1,6 @@
 import { MovableObject } from './interfaces/movable-object.interface'
 import { PlayerSetting } from './interfaces/player-setting.interface'
+const CONNECTION_LIMIT_TIME = 8000
 export class Player implements MovableObject {
   public id
   public name
@@ -13,6 +14,7 @@ export class Player implements MovableObject {
   private jumpStrength: number
   private color: string
   public isOver
+  public timestamp: number
   constructor(params: {
     id: string
     name: string
@@ -26,6 +28,7 @@ export class Player implements MovableObject {
     jumpStrength: number
     color: string
     isOver: boolean
+    timestamp: number
   }) {
     this.id = params.id
     this.name = params.name
@@ -39,6 +42,7 @@ export class Player implements MovableObject {
     this.jumpStrength = params.jumpStrength
     this.color = params.color
     this.isOver = params.isOver
+    this.timestamp = params.timestamp || 0
   }
 
   convertToJson(): {
@@ -54,6 +58,7 @@ export class Player implements MovableObject {
     jumpStrength: number
     color: string
     isOver: boolean
+    timestamp: number
   } {
     return {
       id: this.id,
@@ -68,6 +73,7 @@ export class Player implements MovableObject {
       jumpStrength: this.jumpStrength,
       color: this.color,
       isOver: this.isOver,
+      timestamp: this.timestamp,
     }
   }
 
@@ -77,26 +83,20 @@ export class Player implements MovableObject {
     width: number
     height: number
     isOver: boolean
-  }) {
+  }): void {
+    if (this.isOver) {
+      return
+    }
     this.x = params.x
     this.y = params.y
     this.width = params.width
     this.height = params.height
     this.isOver = params.isOver
-    return new Player({
-      id: this.id,
-      name: this.name,
-      clientId: this.clientId,
-      x: params.x,
-      y: params.y,
-      width: params.width,
-      height: params.height,
-      speed: this.speed,
-      vg: this.vg,
-      jumpStrength: this.jumpStrength,
-      color: this.color,
-      isOver: this.isOver,
-    })
+    this.timestamp = Date.now()
+  }
+
+  isOutOfGame(currentTimestamp: number) {
+    return currentTimestamp - this.timestamp >= CONNECTION_LIMIT_TIME
   }
 
   reset(playerSetting: PlayerSetting) {
@@ -108,6 +108,7 @@ export class Player implements MovableObject {
     this.speed = playerSetting.speed
     this.jumpStrength = playerSetting.jumpStrength
     this.isOver = false
+    this.timestamp = 0
   }
 
   static createPlayer = (
@@ -126,6 +127,7 @@ export class Player implements MovableObject {
       ...playerSetting,
       color: `rgb(${r},${g},${b})`,
       isOver: false,
+      timestamp: 0,
     })
   }
 }

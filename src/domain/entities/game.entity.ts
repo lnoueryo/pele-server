@@ -1,19 +1,22 @@
 import { Player } from './player.entity'
 import { Box } from './box.entity'
 
+const MILLISECONDS_PER_SECOND = 1000
+
 export class Game {
-  private _players
+  private _players: Player[]
   private _boxes: Box[] = []
   private boxCreationProbability = 0.075
-  public startTime: number = 0
-  public currentTime: number = 0
-  public lastTimestamp: number = 0
+  public lastTimestamp: number = Date.now()
   constructor(params: { players: Player[] }) {
     this._players = params.players || []
   }
 
-  loop(deltaTime: number) {
-    // TODO: サーバー側で時間管理
+  loop() {
+    const currentTimestamp = Date.now()
+    const deltaTime =
+      (currentTimestamp - this.lastTimestamp) / MILLISECONDS_PER_SECOND
+    this.lastTimestamp = currentTimestamp
     for (const box of this.boxes) {
       box.moveOnIdle(deltaTime)
       if (box.isOutOfDisplay()) {
@@ -23,6 +26,7 @@ export class Game {
     if (Math.random() < this.boxCreationProbability) {
       this.createBox()
     }
+    return currentTimestamp
   }
 
   private createBox() {
@@ -53,6 +57,18 @@ export class Game {
 
   isNoPlayer() {
     return this.players.length === 0
+  }
+
+  outputGameResult() {
+    return this.players
+    .map((player) => {
+      const playerData = player.convertToJson()
+      return {
+        name: playerData.name,
+        timestamp: playerData.timestamp,
+      }
+    })
+    .sort((a, b) => b.timestamp - a.timestamp)
   }
 
   get players() {

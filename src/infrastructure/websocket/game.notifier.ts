@@ -17,6 +17,10 @@ type PlayerData = {
 }
 type GameEventMap = {
   start: Player[]
+  end: {
+    ranking: { name: string; timestamp: number }[]
+    startTimestamp: number
+  }
   connected: string
   stage: {
     boxes: ArrayBuffer[]
@@ -47,14 +51,29 @@ export class GameNotifier implements IGameNotifier {
       options,
     )
   }
-  updatePosition(player: Player, options: ClientOption) {
+  updatePosition(player: Player, options?: ClientOption) {
     this.send('position', player.convertToJson(), options)
   }
   startGame(players: Player[], options?: ClientOption) {
     this.send('start', players, options)
   }
-  updateStage(stage: { boxes: ArrayBuffer[] }, options: ClientOption) {
+  updateStage(
+    stage: {
+      boxes: ArrayBuffer[]
+      currentTimestamp: number
+    },
+    options?: ClientOption,
+  ) {
     this.send('stage', stage, options)
+  }
+  endGame(
+    endData: {
+      ranking: { name: string; timestamp: number }[]
+      startTimestamp: number
+    },
+    options?: ClientOption,
+  ) {
+    this.send('end', endData, options)
   }
   private send<K extends keyof GameEventMap>(
     event: K,

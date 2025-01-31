@@ -7,6 +7,7 @@ export class GameSetupService {
     players.forEach((player, i) => {
       player.reset({ ...config.playerSetting })
       player.x = spacing * (i + 1)
+      player.timestamp = Date.now()
     })
     return players
   }

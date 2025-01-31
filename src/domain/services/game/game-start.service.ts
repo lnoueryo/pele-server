@@ -8,6 +8,8 @@ const FRAME_RATE = 60
 const MILLISECONDS_PER_SECOND = 1000
 
 export class GameStartService {
+  private startTimestamp: number = Date.now()
+  private currentTimestamp: number = Date.now()
   constructor(
     @Inject(forwardRef(() => IGameNotifier))
     private gameNotifier: IGameNotifier,
@@ -17,20 +19,18 @@ export class GameStartService {
 
   async run(game: Game): Promise<void> {
     let errorCount = 0
-    let lastTimestamp = Date.now()
-
+    this.startTimestamp = Date.now()
     while (true) {
       try {
-        const currentTimestamp = Date.now()
-        const deltaTime =
-          (currentTimestamp - lastTimestamp) / MILLISECONDS_PER_SECOND
-        lastTimestamp = currentTimestamp
-
-        game.loop(deltaTime)
+        this.currentTimestamp = game.loop()
 
         const updatedStage = this.updateStage(game)
         const clients = this.websocketClientRepository.findAll()
-        this.gameNotifier.updateStage(updatedStage, { clients })
+        this.gameNotifier.updateStage(
+          { ...updatedStage, currentTimestamp: this.currentTimestamp },
+          { clients },
+        )
+        this.removeDisconnectedPlayers(game)
         if (game.isGameOver() || game.isNoPlayer()) {
           break
         }
@@ -45,6 +45,7 @@ export class GameStartService {
         }
       }
     }
+    this.sendEndGameNotification(game)
   }
 
   private updateStage(game: Game): { boxes: ArrayBuffer[] } {
@@ -59,5 +60,21 @@ export class GameStartService {
       return buffer
     })
     return { boxes }
+  }
+
+  private removeDisconnectedPlayers(game: Game) {
+    game.players.forEach((player) => {
+      if (player.isOutOfGame(this.currentTimestamp)) {
+        player.isOver = true
+      }
+    })
+  }
+
+  private sendEndGameNotification(game: Game) {
+    const clients = this.websocketClientRepository.findAll()
+    this.gameNotifier.endGame(
+      { ranking: game.outputGameResult(), startTimestamp: this.startTimestamp },
+      { clients },
+    )
   }
 }
