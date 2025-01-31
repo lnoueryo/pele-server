@@ -1,12 +1,11 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
 import { Game } from 'src/domain/entities/game.entity'
 import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
-import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
+import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
 import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
-import { PlayerService } from 'src/domain/services/player.service'
-
-const MAX_ERROR_COUNT = 10
+import { GameSetupService } from 'src/domain/services/game/game-setup.service'
+import { GameStartService } from 'src/domain/services/game/game-start.service'
 
 @Injectable()
 export class StartGameUsecase {
@@ -14,56 +13,28 @@ export class StartGameUsecase {
   constructor(
     @Inject(forwardRef(() => IPlayerRepository))
     private readonly playerRepository: IPlayerRepository,
-    @Inject(forwardRef(() => IWebsocketGameRepository))
-    private readonly websocketGameRepository: IWebsocketGameRepository,
+    @Inject(forwardRef(() => IGameNotifier))
+    private readonly gameNotifier: IGameNotifier,
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
-    private readonly playerService: PlayerService,
+    private readonly gameSetupService: GameSetupService,
+    private readonly gameStartService: GameStartService,
   ) {}
   async execute(): Promise<UsecaseResult<true, 'internal'>> {
     // TODO: サービスに切り出す　存在してないプレイヤーの処理
-    const clients = this.websocketClientRepository.findAll()
-    this.playerService.resetPosition()
-    const players = this.playerService.arrangePosition()
-    this.websocketGameRepository.startGame(players, { clients })
+    // もしゲーム中にAPIを叩かれても何も起きない
     if (this.isGameRunning) return { success: true }
     this.isGameRunning = true
+    // positionをリセットし、プレイヤーを並べる
+    const players = this.playerRepository.findAll()
+    this.gameSetupService.setupPlayers(players)
+    const clients = this.websocketClientRepository.findAll()
+    this.gameNotifier.startGame(players, { clients })
     try {
-      const players = this.playerRepository.findAll()
       const game = new Game({ players })
-      let errorCount = 0
-      let lastTimestamp = 0
-      while (true) {
-        try {
-          const currentTimestamp = Date.now()
-          const deltaTime = (currentTimestamp - lastTimestamp) / 1000
-          lastTimestamp = currentTimestamp
-          game.loop(deltaTime)
-          const boxes = game.boxes.map((box) => {
-            const buffer = new ArrayBuffer(20)
-            const view = new DataView(buffer)
-            view.setFloat32(0, box.x)
-            view.setFloat32(4, box.y)
-            view.setFloat32(8, box.width)
-            view.setFloat32(12, box.height)
-            view.setFloat32(16, box.speed)
-            return buffer
-          })
-          const clients = this.websocketClientRepository.findAll()
-          this.websocketGameRepository.updateStage(boxes, { clients })
-          await new Promise((resolve) => setTimeout(resolve, 1000 / 60))
-          if (game.isGameOver() || players.length === 0) {
-            break
-          }
-        } catch (error) {
-          Logger.warn(error)
-          errorCount++
-          if (errorCount === MAX_ERROR_COUNT) {
-            throw error
-          }
-        }
-      }
+      await this.gameStartService.run(game)
       Logger.log('Done')
+      return { success: true }
     } catch (error) {
       Logger.error(error)
       return {
@@ -75,6 +46,5 @@ export class StartGameUsecase {
     } finally {
       this.isGameRunning = false
     }
-    return { success: true }
   }
 }

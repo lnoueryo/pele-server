@@ -2,15 +2,15 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
 import { IWebsocketClient } from 'src/domain/entities/interfaces/websocket-client.interface'
 import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
-import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
+import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
 
 @Injectable()
 export class DisconnectWebsocketUsecase {
   constructor(
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
-    @Inject(forwardRef(() => IWebsocketGameRepository))
-    private readonly websocketGameRepository: IWebsocketGameRepository,
+    @Inject(forwardRef(() => IGameNotifier))
+    private readonly websocketGameRepository: IGameNotifier,
     @Inject(forwardRef(() => IPlayerRepository))
     private readonly playerRepository: IPlayerRepository,
   ) {}

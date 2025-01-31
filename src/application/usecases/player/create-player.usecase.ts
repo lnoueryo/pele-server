@@ -3,21 +3,19 @@ import { Player } from 'src/domain/entities/player.entity'
 import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
 import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClient } from 'src/domain/entities/interfaces/websocket-client.interface'
-import { IWebsocketGameRepository } from 'src/domain/repositories/websocket/game.repository'
+import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import config from '../../../config'
-import { PlayerService } from 'src/domain/services/player.service'
 
 @Injectable()
 export class CreatePlayerUsecase {
   constructor(
     @Inject(forwardRef(() => IPlayerRepository))
-    private playerRepository: IPlayerRepository,
-    @Inject(forwardRef(() => IWebsocketGameRepository))
-    private websocketGameRepository: IWebsocketGameRepository,
+    private readonly playerRepository: IPlayerRepository,
+    @Inject(forwardRef(() => IGameNotifier))
+    private readonly websocketGameRepository: IGameNotifier,
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
-    private readonly playerService: PlayerService,
   ) {}
   execute(
     user: { uid: string; displayName: string },
@@ -45,7 +43,7 @@ export class CreatePlayerUsecase {
           config.playerSetting,
         )
       this.playerRepository.save(newPlayer)
-      const players = this.playerService.arrangePosition()
+      const players = this.playerRepository.findAll()
       const clients = this.websocketClientRepository.findAll()
       this.websocketGameRepository.acceptPlayer(players, { clients })
       return {
