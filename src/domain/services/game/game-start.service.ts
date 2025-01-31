@@ -27,7 +27,7 @@ export class GameStartService {
         const updatedStage = this.updateStage(game)
         const clients = this.websocketClientRepository.findAll()
         this.gameNotifier.updateStage(
-          { ...updatedStage, currentTimestamp: this.currentTimestamp },
+          { ...updatedStage, currentTime: this.currentTimestamp - this.startTimestamp },
           { clients },
         )
         this.removeDisconnectedPlayers(game)

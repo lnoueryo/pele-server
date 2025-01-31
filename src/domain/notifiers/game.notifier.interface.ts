@@ -11,7 +11,7 @@ export type IGameNotifier = {
   updatePosition(player: Player, options?: ClientOption): void
   startGame(players: Player[], options?: ClientOption): void
   updateStage(
-    stage: { boxes: ArrayBuffer[]; currentTimestamp: number },
+    stage: { boxes: ArrayBuffer[]; currentTime: number },
     options?: ClientOption,
   ): void
   endGame(

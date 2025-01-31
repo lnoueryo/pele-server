@@ -60,7 +60,7 @@ export class GameNotifier implements IGameNotifier {
   updateStage(
     stage: {
       boxes: ArrayBuffer[]
-      currentTimestamp: number
+      currentTime: number
     },
     options?: ClientOption,
   ) {
