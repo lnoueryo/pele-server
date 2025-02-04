@@ -6,6 +6,11 @@ import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import { GameSetupService } from 'src/domain/services/game/game-setup.service'
 import { GameStartService } from 'src/domain/services/game/game-start.service'
+import { IPlayer } from 'src/domain/entities/interfaces/player-setting.interface'
+import { ComputerPlayer } from 'src/domain/entities/computer.entiry'
+import config from 'src/config'
+
+const MAX_PLAYER_NUM = 5
 
 @Injectable()
 export class StartGameUsecase {
@@ -26,7 +31,20 @@ export class StartGameUsecase {
     if (this.isGameRunning) return { success: true }
     this.isGameRunning = true
     // positionをリセットし、プレイヤーを並べる
-    const players = this.playerRepository.findAll()
+    const players: IPlayer[] = this.playerRepository.findAll()
+    for (const computer of config.computerSetting) {
+      if (players.length === MAX_PLAYER_NUM) {
+        break
+      }
+      const newComputer = ComputerPlayer.createPlayer(
+        computer.id,
+        computer.name,
+        computer.mode,
+        computer.color,
+        config.playerSetting,
+      )
+      players.push(newComputer)
+    }
     this.gameSetupService.setupPlayers(players)
     const clients = this.websocketClientRepository.findAll()
     this.gameNotifier.startGame(players, { clients })

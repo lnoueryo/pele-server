@@ -1,4 +1,4 @@
-import { MovableObject } from './interfaces/movable-object.interface'
+import { IServerGameObject } from './interfaces/game-object.interface'
 import config from '../../config'
 export type BoxSetting = {
   moveYProbability: number
@@ -25,7 +25,7 @@ type IBox = {
   speed: number
 }
 
-export class Box implements MovableObject {
+export class Box implements IServerGameObject {
   public x
   public y
   public width
@@ -33,10 +33,10 @@ export class Box implements MovableObject {
   public speed
   private ySalt = Math.random() - 0.5
   constructor(params: IBox) {
-    this.width = params.width
-    this.height = params.height
     this.x = params.x
     this.y = params.y
+    this.width = params.width
+    this.height = params.height
     this.speed = params.speed
   }
 
@@ -54,6 +54,17 @@ export class Box implements MovableObject {
     const OVER_TOP_LIMIT = this.y - this.height > 1
     return OVER_LEFT_LIMIT || OVER_BOTTOM_LIMIT || OVER_TOP_LIMIT
   }
+
+  convertToJson(): { width: number; height: number; x: number; y: number; speed: number; } {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+      speed: this.speed,
+    }
+  }
+
   static createBox() {
     const x = 1
     const y = 1 * START_POSITION

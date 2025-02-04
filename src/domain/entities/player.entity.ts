@@ -1,7 +1,7 @@
-import { MovableObject } from './interfaces/movable-object.interface'
-import { PlayerSetting } from './interfaces/player-setting.interface'
+import { IClientGameObject } from './interfaces/game-object.interface'
+import { IPlayer, PlayerSetting } from './interfaces/player-setting.interface'
 const CONNECTION_LIMIT_TIME = 8000
-export class Player implements MovableObject {
+export class Player implements IClientGameObject, IPlayer {
   public id
   public name
   public clientId
@@ -47,7 +47,6 @@ export class Player implements MovableObject {
 
   convertToJson(): {
     id: string
-    clientId: string
     name: string
     x: number
     y: number
@@ -62,7 +61,6 @@ export class Player implements MovableObject {
   } {
     return {
       id: this.id,
-      clientId: this.clientId,
       name: this.name,
       x: this.x,
       y: this.y,

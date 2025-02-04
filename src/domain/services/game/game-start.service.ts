@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Logger } from '@nestjs/common'
 import { Game } from 'src/domain/entities/game.entity'
+import { Player } from 'src/domain/entities/player.entity'
 import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 
@@ -30,6 +31,9 @@ export class GameStartService {
           { ...updatedStage, currentTime: this.currentTimestamp - this.startTimestamp },
           { clients },
         )
+        game.computers.forEach(computer => {
+          this.gameNotifier.updatePosition(computer, { clients })
+        })
         this.removeDisconnectedPlayers(game)
         if (game.isGameOver() || game.isNoPlayer()) {
           break
@@ -52,11 +56,12 @@ export class GameStartService {
     const boxes = game.boxes.map((box) => {
       const buffer = new ArrayBuffer(20)
       const view = new DataView(buffer)
-      view.setFloat32(0, box.x)
-      view.setFloat32(4, box.y)
-      view.setFloat32(8, box.width)
-      view.setFloat32(12, box.height)
-      view.setFloat32(16, box.speed)
+      const { x, y, width, height, speed } = box.convertToJson()
+      view.setFloat32(0, x)
+      view.setFloat32(4, y)
+      view.setFloat32(8, width)
+      view.setFloat32(12, height)
+      view.setFloat32(16, speed)
       return buffer
     })
     return { boxes }
@@ -64,7 +69,7 @@ export class GameStartService {
 
   private removeDisconnectedPlayers(game: Game) {
     game.players.forEach((player) => {
-      if (player.isOutOfGame(this.currentTimestamp)) {
+      if (player instanceof Player && player.isOutOfGame(this.currentTimestamp)) {
         player.isOver = true
       }
     })
