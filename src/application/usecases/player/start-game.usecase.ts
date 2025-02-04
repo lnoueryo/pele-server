@@ -9,6 +9,7 @@ import { GameStartService } from 'src/domain/services/game/game-start.service'
 import { IPlayer } from 'src/domain/entities/interfaces/player-setting.interface'
 import { ComputerPlayer } from 'src/domain/entities/computer.entiry'
 import config from 'src/config'
+import { GameMode } from './shared/game-mode'
 
 const MAX_PLAYER_NUM = 5
 
@@ -25,25 +26,26 @@ export class StartGameUsecase {
     private readonly gameSetupService: GameSetupService,
     private readonly gameStartService: GameStartService,
   ) {}
-  async execute(): Promise<UsecaseResult<true, 'internal'>> {
-    // TODO: サービスに切り出す　存在してないプレイヤーの処理
+  async execute(mode: GameMode): Promise<UsecaseResult<true, 'internal'>> {
     // もしゲーム中にAPIを叩かれても何も起きない
     if (this.isGameRunning) return { success: true }
     this.isGameRunning = true
     // positionをリセットし、プレイヤーを並べる
     const players: IPlayer[] = this.playerRepository.findAll()
-    for (const computer of config.computerSetting) {
-      if (players.length === MAX_PLAYER_NUM) {
-        break
+    if (mode === 'battle-royale') {
+      for (const computer of config.computerSetting) {
+        if (players.length === MAX_PLAYER_NUM) {
+          break
+        }
+        const newComputer = ComputerPlayer.createPlayer(
+          computer.id,
+          computer.name,
+          computer.mode,
+          computer.color,
+          config.playerSetting,
+        )
+        players.push(newComputer)
       }
-      const newComputer = ComputerPlayer.createPlayer(
-        computer.id,
-        computer.name,
-        computer.mode,
-        computer.color,
-        config.playerSetting,
-      )
-      players.push(newComputer)
     }
     this.gameSetupService.setupPlayers(players)
     const clients = this.websocketClientRepository.findAll()

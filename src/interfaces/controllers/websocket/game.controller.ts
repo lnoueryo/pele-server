@@ -11,6 +11,7 @@ import { StartGameUsecase } from 'src/application/usecases/player/start-game.use
 import { SocketIO } from 'src/infrastructure/plugins/socket.io'
 import { ConnectWebsocketUsecase } from 'src/application/usecases/player/connect-websocket.usecase'
 import { DisconnectWebsocketUsecase } from 'src/application/usecases/player/disconnect-websocket.usecase'
+import { GameMode } from 'src/application/usecases/player/shared/game-mode'
 
 @WebSocketGateway({
   namespace: '/game',
@@ -64,7 +65,7 @@ export class GameController {
   }
 
   @SubscribeMessage('start')
-  async startGame() {
-    await this.startGameUsecase.execute()
+  async startGame(@MessageBody() mode: GameMode) {
+    await this.startGameUsecase.execute(mode)
   }
 }
