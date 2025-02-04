@@ -1,6 +1,6 @@
 import { IClientGameObject } from './interfaces/game-object.interface'
 import { IPlayer, PlayerSetting } from './interfaces/player-setting.interface'
-const CONNECTION_LIMIT_TIME = 8000
+const CONNECTION_LIMIT_TIME = 2500
 export class Player implements IClientGameObject, IPlayer {
   public id
   public name
