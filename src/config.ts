@@ -1,10 +1,12 @@
 import * as dotenv from 'dotenv'
 import type { PlayerSetting } from './domain/entities/interfaces/player-setting.interface'
 import { BoxSetting } from './domain/entities/box.entity'
+import { ComputerSetting } from './domain/entities/computer.entiry'
 dotenv.config()
 type Config = {
   playerSetting: PlayerSetting
   boxSetting: BoxSetting
+  computerSetting: ComputerSetting[]
 }
 const playerSetting = process.env.PLAYER_SETTING
   ? JSON.parse(process.env.PLAYER_SETTING)
@@ -27,10 +29,36 @@ const boxSetting = process.env.BOX_SETTING
       minSpeed: 0.3,
       maxSpeed: 0.6,
     }
-
+const computerSetting: ComputerSetting[] = [
+  {
+    id: 'VKCEUhKF8J',
+    name: '1st CPU',
+    mode: 'nearest',
+    color: `rgb(0,0,255)`,
+  },
+  {
+    id: '0f1E7KLL3u',
+    name: '2nd CPU',
+    mode: 'fastest',
+    color: `rgb(255,0,0)`,
+  },
+  {
+    id: 'nnltC0odY7',
+    name: '3rd CPU',
+    mode: 'slowest',
+    color: `rgb(0,255,0)`,
+  },
+  {
+    id: 'dM7L1x5Yr8',
+    name: '4th CPU',
+    mode: 'highest',
+    color: `rgb(255,255,0)`,
+  },
+]
 const config: Config = {
   playerSetting,
   boxSetting,
+  computerSetting,
 }
 type ConfigEnv = {
   httpApiOrigin: string

@@ -8,6 +8,7 @@ export class ObjectController {
     return {
       playerSetting: config.playerSetting,
       boxSetting: config.boxSetting,
+      computerSetting: config.computerSetting,
     }
   }
 }

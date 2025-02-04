@@ -35,10 +35,12 @@ export class UpdatePlayerUsecase {
           },
         }
       }
-      player.updateFromJson(body)
-      this.gameNotifier.updatePosition(player, {
-        excludeClient: client,
-      })
+      if (!player.isOver) {
+        player.updateFromJson(body)
+        this.gameNotifier.updatePosition(player, {
+          excludeClient: client,
+        })
+      }
       return {
         success: true,
       }

@@ -1,3 +1,4 @@
+import { IPlayer } from 'src/domain/entities/interfaces/player-setting.interface'
 import { Player } from 'src/domain/entities/player.entity'
 import {
   ClientOption,
@@ -51,7 +52,7 @@ export class GameNotifier implements IGameNotifier {
       options,
     )
   }
-  updatePosition(player: Player, options?: ClientOption) {
+  updatePosition(player: IPlayer, options?: ClientOption) {
     this.send('position', player.convertToJson(), options)
   }
   startGame(players: Player[], options?: ClientOption) {
