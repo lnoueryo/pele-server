@@ -4,6 +4,7 @@ import { ComputerPlayer } from './computer.entiry'
 import { IPlayer } from './interfaces/player-setting.interface'
 
 const MILLISECONDS_PER_SECOND = 1000
+const PLAYER_DELAY = 1000
 
 export class Game {
   private _players: IPlayer[]
@@ -14,16 +15,18 @@ export class Game {
     this._players = params.players || []
   }
 
-  loop() {
+  loop(startTimestamp: number) {
     const currentTimestamp = Date.now()
     const deltaTime =
       (currentTimestamp - this.lastTimestamp) / MILLISECONDS_PER_SECOND
     this.lastTimestamp = currentTimestamp
-    for (const player of this.players) {
-      if (player instanceof ComputerPlayer) {
-        player.decideNextMove(this.boxes)
-        player.moveOnIdle(deltaTime)
-        player.isGameOver()
+    if (currentTimestamp - startTimestamp > PLAYER_DELAY) {
+      for (const player of this.players) {
+        if (player instanceof ComputerPlayer) {
+          player.decideNextMove(this.boxes)
+          player.moveOnIdle(deltaTime)
+          player.isGameOver()
+        }
       }
     }
     for (const box of this.boxes) {
