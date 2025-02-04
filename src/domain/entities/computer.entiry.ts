@@ -1,13 +1,13 @@
-import { Box } from "./box.entity";
-import { IServerGameObject } from "./interfaces/game-object.interface"
-import { IPlayer, PlayerSetting } from "./interfaces/player-setting.interface";
+import { Box } from './box.entity'
+import { IServerGameObject } from './interfaces/game-object.interface'
+import { IPlayer, PlayerSetting } from './interfaces/player-setting.interface'
 
 export type ComputerMode = 'slowest' | 'fastest' | 'highest' | 'nearest'
 export type ComputerSetting = {
-  id: string,
-  name: string,
-  mode: ComputerMode,
-  color: string,
+  id: string
+  name: string
+  mode: ComputerMode
+  color: string
 }
 export class ComputerPlayer implements IServerGameObject, IPlayer {
   public id: string

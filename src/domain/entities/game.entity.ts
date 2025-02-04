@@ -35,7 +35,11 @@ export class Game {
         this.deleteBox(box)
       }
       this.players.forEach((player) => {
-        if (player instanceof ComputerPlayer && player.isPlayerCollidingWithBox(box)) player.moveOnTopBox(box.y)
+        if (
+          player instanceof ComputerPlayer &&
+          player.isPlayerCollidingWithBox(box)
+        )
+          player.moveOnTopBox(box.y)
       })
     }
     if (Math.random() < this.boxCreationProbability) {
@@ -76,14 +80,14 @@ export class Game {
 
   outputGameResult() {
     return this.players
-    .map((player) => {
-      const playerData = player.convertToJson()
-      return {
-        name: playerData.name,
-        timestamp: playerData.timestamp,
-      }
-    })
-    .sort((a, b) => b.timestamp - a.timestamp)
+      .map((player) => {
+        const playerData = player.convertToJson()
+        return {
+          name: playerData.name,
+          timestamp: playerData.timestamp,
+        }
+      })
+      .sort((a, b) => b.timestamp - a.timestamp)
   }
 
   get players() {
@@ -91,7 +95,7 @@ export class Game {
   }
 
   get computers() {
-    return this._players.filter(player => player instanceof ComputerPlayer)
+    return this._players.filter((player) => player instanceof ComputerPlayer)
   }
 
   get boxes() {

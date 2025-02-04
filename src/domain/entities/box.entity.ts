@@ -55,7 +55,13 @@ export class Box implements IServerGameObject {
     return OVER_LEFT_LIMIT || OVER_BOTTOM_LIMIT || OVER_TOP_LIMIT
   }
 
-  convertToJson(): { width: number; height: number; x: number; y: number; speed: number; } {
+  convertToJson(): {
+    width: number
+    height: number
+    x: number
+    y: number
+    speed: number
+  } {
     return {
       x: this.x,
       y: this.y,

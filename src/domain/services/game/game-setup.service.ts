@@ -1,6 +1,5 @@
 import { IPlayer } from 'src/domain/entities/interfaces/player-setting.interface'
 import config from '../../../config'
-import { Player } from '../../entities/player.entity'
 
 export class GameSetupService {
   setupPlayers(players: IPlayer[]): IPlayer[] {

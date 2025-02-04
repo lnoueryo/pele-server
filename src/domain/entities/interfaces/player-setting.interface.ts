@@ -1,4 +1,4 @@
-import { IGameObject } from "./game-object.interface"
+import { IGameObject } from './game-object.interface'
 
 export type PlayerSetting = {
   x: number

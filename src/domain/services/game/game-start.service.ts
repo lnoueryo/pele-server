@@ -28,10 +28,13 @@ export class GameStartService {
         const updatedStage = this.updateStage(game)
         const clients = this.websocketClientRepository.findAll()
         this.gameNotifier.updateStage(
-          { ...updatedStage, currentTime: this.currentTimestamp - this.startTimestamp },
+          {
+            ...updatedStage,
+            currentTime: this.currentTimestamp - this.startTimestamp,
+          },
           { clients },
         )
-        game.computers.forEach(computer => {
+        game.computers.forEach((computer) => {
           this.gameNotifier.updatePosition(computer, { clients })
         })
         if (game.isGameOver() || game.isNoPlayer()) {
@@ -68,7 +71,11 @@ export class GameStartService {
 
   private removeDisconnectedPlayers(game: Game) {
     game.players.forEach((player) => {
-      if (player instanceof Player && player.isOutOfGame(this.currentTimestamp) && !player.isOver) {
+      if (
+        player instanceof Player &&
+        player.isOutOfGame(this.currentTimestamp) &&
+        !player.isOver
+      ) {
         player.y = 1
         player.isOver = true
         player.timestamp = Date.now()
