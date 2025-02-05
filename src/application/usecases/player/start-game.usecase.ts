@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
 import { Game } from 'src/domain/entities/game.entity'
 import { IPlayerRepository } from 'src/domain/repositories/memory/player.repository.interface'
+import { IGameResultRepository } from 'src/domain/repositories/db/game-result.repository.interface'
 import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
 import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
@@ -9,6 +10,8 @@ import { IPlayer } from 'src/domain/entities/interfaces/player-setting.interface
 import config from 'src/config'
 import { GameMode } from './shared/game-mode'
 import { GameCreateParticipantService } from 'src/domain/services/game/game-create-participant'
+import { GameResult } from 'src/domain/entities/game-result.entity'
+import { Player } from 'src/domain/entities/player.entity'
 
 const MAX_PLAYER_NUM = 5
 
@@ -22,6 +25,8 @@ export class StartGameUsecase {
     private readonly gameNotifier: IGameNotifier,
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
+    @Inject(forwardRef(() => IGameResultRepository))
+    private readonly gameResultRepository: IGameResultRepository,
     private readonly gameCreateParticipantService: GameCreateParticipantService,
     private readonly gameStartService: GameStartService,
   ) {}
@@ -44,6 +49,18 @@ export class StartGameUsecase {
         { ranking: game.outputGameResult(), startTimestamp: game.startTimestamp },
         { clients },
       )
+      game.players.forEach(async(player) => {
+        if (player instanceof Player) {
+          await this.gameResultRepository.save(new GameResult({
+            gameId: game.id,
+            userId: player.id,
+            startTimestamp: new Date(game.startTimestamp),
+            lastTimestamp: new Date(game.lastTimestamp),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }))
+        }
+      })
       return { success: true }
     } catch (error) {
       Logger.error(error)

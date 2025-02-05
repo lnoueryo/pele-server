@@ -1,4 +1,3 @@
-import { Player } from './player.entity'
 import { Box } from './box.entity'
 import { ComputerPlayer } from './computer.entiry'
 import { IPlayer, PlayerSetting } from './interfaces/player-setting.interface'
@@ -6,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 export type GameMode = 'time-survival' | 'battle-royale'
 export class Game {
-  private id: string
+  public id: string
   private _mode: GameMode
   private _players: IPlayer[]
   private _boxes: Box[] = []
@@ -28,8 +27,12 @@ export class Game {
   get lastTimestamp() {
     return this._lastTimestamp
   }
-  constructor(params: { players: IPlayer[]; mode: GameMode }) {
-    this.id = uuidv4()
+  constructor(params: {
+    id?: string
+    mode: GameMode
+    players: IPlayer[]
+  }) {
+    this.id = params.id || uuidv4()
     this._players = params.players || []
     this._mode = params.mode
   }
@@ -91,7 +94,7 @@ export class Game {
   }
 
   shouldTerminate() {
-    return this.isGameOver || this.isNoPlayer()
+    return this.isGameOver() || this.isNoPlayer()
   }
 
   private isGameOver() {
