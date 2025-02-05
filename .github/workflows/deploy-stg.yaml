@@ -40,7 +40,7 @@ jobs:
       - name: Create Firebase Admin Credentials
         run: |
           mkdir -p .credentials
-          echo '${{ secrets.FIREBASE_ADMIN_SERVICE_ACCOUNT }}' | jq '.' > .credentials/firebase-admin.json
+          echo "${{ secrets.FIREBASE_ADMIN_SERVICE_ACCOUNT }}" | base64 --decode > .credentials/firebase-admin.json
 
       - name: Authorize Docker push
         run: gcloud auth configure-docker
@@ -50,7 +50,7 @@ jobs:
           docker build -f Dockerfile -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/pele-server:${{ github.sha }} .
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/pele-server:${{ github.sha }}
 
-      - name: Deploy to Google Cloud Run - Production
+      - name: Deploy to Google Cloud Run - Staging
         run: |
           gcloud run deploy pele-server-stg \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/pele-server:${{ github.sha }} \
