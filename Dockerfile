@@ -17,6 +17,7 @@ RUN npm run build
 FROM node:22-alpine
 
 WORKDIR /app
+COPY .credentials/firebase-admin.json .credentials/firebase-admin.json
 
 # Install only production dependencies
 COPY package*.json ./
