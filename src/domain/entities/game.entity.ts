@@ -4,8 +4,6 @@ import { ComputerPlayer } from './computer.entiry'
 import { IPlayer, PlayerSetting } from './interfaces/player-setting.interface'
 import { v4 as uuidv4 } from 'uuid'
 
-const MILLISECONDS_PER_SECOND = 1000
-const PLAYER_DELAY = 1000
 export type GameMode = 'time-survival' | 'battle-royale'
 export class Game {
   private id: string
@@ -36,20 +34,17 @@ export class Game {
     this._mode = params.mode
   }
 
-  loop() {
-    const currentTimestamp = Date.now()
-    const deltaTime =
-      (currentTimestamp - this.lastTimestamp) / MILLISECONDS_PER_SECOND
-    this._lastTimestamp = currentTimestamp
-    if (currentTimestamp - this.startTimestamp > PLAYER_DELAY) {
-      for (const player of this.players) {
-        if (player instanceof ComputerPlayer) {
-          player.decideNextMove(this.boxes)
-          player.moveOnIdle(deltaTime)
-          player.isGameOver()
-        }
+  processPlayers(deltaTime: number) {
+    for (const player of this.players) {
+      if (player instanceof ComputerPlayer) {
+        player.decideNextMove(this.boxes)
+        player.moveOnIdle(deltaTime)
+        player.isGameOver()
       }
     }
+  }
+
+  processBoxes(deltaTime: number) {
     for (const box of this.boxes) {
       box.moveOnIdle(deltaTime)
       if (box.isOutOfDisplay()) {
@@ -66,7 +61,6 @@ export class Game {
     if (Math.random() < this.boxCreationProbability) {
       this.createBox()
     }
-    return currentTimestamp
   }
 
   private createBox() {
@@ -77,6 +71,10 @@ export class Game {
   private deleteBox(box: Box) {
     const index = this.boxes.indexOf(box)
     this.boxes.splice(index, 1)
+  }
+
+  updateCurrentTime(timestamp: number) {
+    this._lastTimestamp = timestamp
   }
 
   addPlayer(player: IPlayer) {
@@ -92,25 +90,15 @@ export class Game {
     })
   }
 
-  updatePlayers(players: Player[]) {
-    return new Game({
-      players,
-      mode: this._mode,
-    })
+  shouldTerminate() {
+    return this.isGameOver || this.isNoPlayer()
   }
 
-  resetGame(players: Player[]) {
-    return new Game({
-      players,
-      mode: this._mode,
-    })
-  }
-
-  isGameOver() {
+  private isGameOver() {
     return this.players.every((player) => player.isOver)
   }
 
-  isNoPlayer() {
+  private isNoPlayer() {
     return this.players.length === 0
   }
 

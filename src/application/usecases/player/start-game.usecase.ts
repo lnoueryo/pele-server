@@ -39,6 +39,11 @@ export class StartGameUsecase {
     try {
       await this.gameStartService.run(game)
       Logger.log('Done')
+      const clients = this.websocketClientRepository.findAll()
+      this.gameNotifier.endGame(
+        { ranking: game.outputGameResult(), startTimestamp: game.startTimestamp },
+        { clients },
+      )
       return { success: true }
     } catch (error) {
       Logger.error(error)
