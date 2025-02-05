@@ -7,10 +7,9 @@ import { IWebsocketClientRepository } from 'src/domain/repositories/memory/webso
 const MAX_ERROR_COUNT = 5
 const FRAME_RATE = 60
 const MILLISECONDS_PER_SECOND = 1000
+const PLAYER_DELAY = 1000
 
 export class GameStartService {
-  private startTimestamp: number = Date.now()
-  private currentTimestamp: number = Date.now()
   constructor(
     @Inject(forwardRef(() => IGameNotifier))
     private gameNotifier: IGameNotifier,
@@ -20,24 +19,33 @@ export class GameStartService {
 
   async run(game: Game): Promise<void> {
     let errorCount = 0
-    this.startTimestamp = Date.now()
+    game.startTimestamp = Date.now()
     while (true) {
       try {
-        this.currentTimestamp = game.loop(this.startTimestamp)
+        const currentTimestamp = Date.now()
+        const deltaTime =
+          (currentTimestamp - game.lastTimestamp) / MILLISECONDS_PER_SECOND
+        game.updateCurrentTime(currentTimestamp)
+
+        if (currentTimestamp - game.startTimestamp > PLAYER_DELAY) {
+          game.processPlayers(deltaTime)
+        }
+        game.processBoxes(deltaTime)
+
         this.removeDisconnectedPlayers(game)
         const updatedStage = this.updateStage(game)
         const clients = this.websocketClientRepository.findAll()
         this.gameNotifier.updateStage(
           {
             ...updatedStage,
-            currentTime: this.currentTimestamp - this.startTimestamp,
+            currentTime: game.lastTimestamp - game.startTimestamp,
           },
           { clients },
         )
         game.computers.forEach((computer) => {
           this.gameNotifier.updatePosition(computer, { clients })
         })
-        if (game.isGameOver() || game.isNoPlayer()) {
+        if (game.shouldTerminate()) {
           break
         }
         await new Promise((resolve) =>
@@ -51,7 +59,6 @@ export class GameStartService {
         }
       }
     }
-    this.sendEndGameNotification(game)
   }
 
   private updateStage(game: Game): { boxes: ArrayBuffer[] } {
@@ -73,7 +80,7 @@ export class GameStartService {
     game.players.forEach((player) => {
       if (
         player instanceof Player &&
-        player.isOutOfGame(this.currentTimestamp) &&
+        player.isOutOfGame(game.lastTimestamp) &&
         !player.isOver
       ) {
         player.y = 1
@@ -83,13 +90,5 @@ export class GameStartService {
         this.gameNotifier.updatePosition(player, { clients })
       }
     })
-  }
-
-  private sendEndGameNotification(game: Game) {
-    const clients = this.websocketClientRepository.findAll()
-    this.gameNotifier.endGame(
-      { ranking: game.outputGameResult(), startTimestamp: this.startTimestamp },
-      { clients },
-    )
   }
 }
