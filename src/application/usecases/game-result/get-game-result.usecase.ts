@@ -6,7 +6,7 @@ import { IGameResultRepository } from 'src/domain/repositories/db/game-result.re
 export class GetGameResultUseCase {
   constructor(
     @Inject(forwardRef(() => IGameResultRepository))
-    private readonly gameResultRepository: IGameResultRepository
+    private readonly gameResultRepository: IGameResultRepository,
   ) {}
 
   async do(): Promise<GameResult[]> {

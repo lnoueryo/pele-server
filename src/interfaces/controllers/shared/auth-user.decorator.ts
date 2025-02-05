@@ -1,6 +1,7 @@
 import {
   createParamDecorator,
   ExecutionContext,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common'
 import { auth } from '../../../infrastructure/plugins/firebase-admin'
@@ -19,9 +20,9 @@ export const AuthUser = createParamDecorator(
 
     try {
       const decodedToken = await auth.verifyIdToken(token)
-      // request.user = decodedToken
       return new AuthUserRequest(decodedToken)
     } catch (error) {
+      Logger.error(error)
       throw new UnauthorizedException('Invalid or expired token')
     }
   },

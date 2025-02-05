@@ -13,12 +13,12 @@ import { GetGameResultUseCase } from 'src/application/usecases/game-result/get-g
 export class GameResultController {
   constructor(
     private readonly getGameResultUseCase: GetGameResultUseCase,
-    private readonly getGameUserResultUseCase: GetGameUserResultUseCase
+    private readonly getGameUserResultUseCase: GetGameUserResultUseCase,
   ) {}
   @Get()
   @ApiResponse({ status: 200, type: GetGameResultResponse })
   async getGameResults(
-    @AuthUser() user: AuthUserRequest,
+    @AuthUser() _: AuthUserRequest,
   ): Promise<GetGameResultResponse> {
     const result = await this.getGameResultUseCase.do()
     return new GetGameResultResponse({ gameResults: result })
