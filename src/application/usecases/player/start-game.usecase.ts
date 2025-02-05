@@ -13,8 +13,6 @@ import { GameCreateParticipantService } from 'src/domain/services/game/game-crea
 import { GameResult } from 'src/domain/entities/game-result.entity'
 import { Player } from 'src/domain/entities/player.entity'
 
-const MAX_PLAYER_NUM = 5
-
 @Injectable()
 export class StartGameUsecase {
   private isGameRunning = false
@@ -46,19 +44,25 @@ export class StartGameUsecase {
       Logger.log('Done')
       const clients = this.websocketClientRepository.findAll()
       this.gameNotifier.endGame(
-        { ranking: game.outputGameResult(), startTimestamp: game.startTimestamp },
+        {
+          ranking: game.outputGameResult(),
+          startTimestamp: game.startTimestamp,
+        },
         { clients },
       )
-      game.players.forEach(async(player) => {
+      game.players.forEach(async (player) => {
         if (player instanceof Player) {
-          await this.gameResultRepository.save(new GameResult({
-            gameId: game.id,
-            userId: player.id,
-            startTimestamp: new Date(game.startTimestamp),
-            lastTimestamp: new Date(game.lastTimestamp),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }))
+          await this.gameResultRepository.save(
+            new GameResult({
+              gameId: game.id,
+              userId: player.id,
+              name: player.name,
+              startTimestamp: game.startTimestamp,
+              lastTimestamp: game.lastTimestamp,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }),
+          )
         }
       })
       return { success: true }

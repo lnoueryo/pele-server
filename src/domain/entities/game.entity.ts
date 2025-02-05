@@ -27,11 +27,7 @@ export class Game {
   get lastTimestamp() {
     return this._lastTimestamp
   }
-  constructor(params: {
-    id?: string
-    mode: GameMode
-    players: IPlayer[]
-  }) {
+  constructor(params: { id?: string; mode: GameMode; players: IPlayer[] }) {
     this.id = params.id || uuidv4()
     this._players = params.players || []
     this._mode = params.mode

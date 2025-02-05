@@ -4,22 +4,25 @@ export class GameResult {
   public id: string
   public gameId: string
   public userId: string
-  public startTimestamp: Date
-  public lastTimestamp: Date
+  public name: string
+  public startTimestamp: number
+  public lastTimestamp: number
   public createdAt: Date
   public updatedAt: Date
   constructor(params: {
     id?: string
     gameId: string
     userId: string
-    startTimestamp: Date
-    lastTimestamp: Date
+    name: string
+    startTimestamp: number
+    lastTimestamp: number
     createdAt: Date
     updatedAt: Date
   }) {
     this.id = params.id || uuidv4()
     this.gameId = params.gameId
     this.userId = params.userId
+    this.name = params.name
     this.startTimestamp = params.startTimestamp
     this.lastTimestamp = params.lastTimestamp
     this.createdAt = params.createdAt
