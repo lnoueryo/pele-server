@@ -12,8 +12,8 @@ import { IPlayerRepository } from 'src/domain/repositories/memory/player.reposit
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
 import { DisconnectWebsocketUsecase } from 'src/application/usecases/player/disconnect-websocket.usecase'
 import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
-import { GameSetupService } from 'src/domain/services/game/game-setup.service'
 import { GameStartService } from 'src/domain/services/game/game-start.service'
+import { GameCreateParticipantService } from 'src/domain/services/game/game-create-participant'
 
 @Module({
   providers: [
@@ -23,7 +23,7 @@ import { GameStartService } from 'src/domain/services/game/game-start.service'
     StartGameUsecase,
     ConnectWebsocketUsecase,
     DisconnectWebsocketUsecase,
-    GameSetupService,
+    GameCreateParticipantService,
     GameStartService,
     {
       provide: IPlayerRepository,

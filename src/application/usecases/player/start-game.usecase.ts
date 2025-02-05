@@ -4,12 +4,11 @@ import { IPlayerRepository } from 'src/domain/repositories/memory/player.reposit
 import { IGameNotifier } from 'src/domain/notifiers/game.notifier.interface'
 import { UsecaseResult } from './shared/usecase-result'
 import { IWebsocketClientRepository } from 'src/domain/repositories/memory/websocket-client.repository.interface'
-import { GameSetupService } from 'src/domain/services/game/game-setup.service'
 import { GameStartService } from 'src/domain/services/game/game-start.service'
 import { IPlayer } from 'src/domain/entities/interfaces/player-setting.interface'
-import { ComputerPlayer } from 'src/domain/entities/computer.entiry'
 import config from 'src/config'
 import { GameMode } from './shared/game-mode'
+import { GameCreateParticipantService } from 'src/domain/services/game/game-create-participant'
 
 const MAX_PLAYER_NUM = 5
 
@@ -23,7 +22,7 @@ export class StartGameUsecase {
     private readonly gameNotifier: IGameNotifier,
     @Inject(forwardRef(() => IWebsocketClientRepository))
     private readonly websocketClientRepository: IWebsocketClientRepository,
-    private readonly gameSetupService: GameSetupService,
+    private readonly gameCreateParticipantService: GameCreateParticipantService,
     private readonly gameStartService: GameStartService,
   ) {}
   async execute(mode: GameMode): Promise<UsecaseResult<true, 'internal'>> {
@@ -32,26 +31,12 @@ export class StartGameUsecase {
     this.isGameRunning = true
     // positionをリセットし、プレイヤーを並べる
     const players: IPlayer[] = this.playerRepository.findAll()
-    if (mode === 'battle-royale') {
-      for (const computer of config.computerSetting) {
-        if (players.length === MAX_PLAYER_NUM) {
-          break
-        }
-        const newComputer = ComputerPlayer.createPlayer(
-          computer.id,
-          computer.name,
-          computer.mode,
-          computer.color,
-          config.playerSetting,
-        )
-        players.push(newComputer)
-      }
-    }
-    this.gameSetupService.setupPlayers(players)
+    const game = new Game({ players, mode })
+    this.gameCreateParticipantService.createParticipants(game)
+    game.setupPlayers(config.playerSetting)
     const clients = this.websocketClientRepository.findAll()
-    this.gameNotifier.startGame(players, { clients })
+    this.gameNotifier.startGame(game.players, { clients })
     try {
-      const game = new Game({ players })
       await this.gameStartService.run(game)
       Logger.log('Done')
       return { success: true }

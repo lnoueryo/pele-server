@@ -1,26 +1,47 @@
 import { Player } from './player.entity'
 import { Box } from './box.entity'
 import { ComputerPlayer } from './computer.entiry'
-import { IPlayer } from './interfaces/player-setting.interface'
+import { IPlayer, PlayerSetting } from './interfaces/player-setting.interface'
+import { v4 as uuidv4 } from 'uuid'
 
 const MILLISECONDS_PER_SECOND = 1000
 const PLAYER_DELAY = 1000
-
+export type GameMode = 'time-survival' | 'battle-royale'
 export class Game {
+  private id: string
+  private _mode: GameMode
   private _players: IPlayer[]
   private _boxes: Box[] = []
   private boxCreationProbability = 0.075
-  public lastTimestamp: number = Date.now()
-  constructor(params: { players: IPlayer[] }) {
+  public startTimestamp: number = Date.now()
+  private _lastTimestamp: number = Date.now()
+  get mode() {
+    return this._mode
+  }
+  get players() {
+    return this._players
+  }
+  get computers() {
+    return this._players.filter((player) => player instanceof ComputerPlayer)
+  }
+  get boxes() {
+    return this._boxes
+  }
+  get lastTimestamp() {
+    return this._lastTimestamp
+  }
+  constructor(params: { players: IPlayer[]; mode: GameMode }) {
+    this.id = uuidv4()
     this._players = params.players || []
+    this._mode = params.mode
   }
 
-  loop(startTimestamp: number) {
+  loop() {
     const currentTimestamp = Date.now()
     const deltaTime =
       (currentTimestamp - this.lastTimestamp) / MILLISECONDS_PER_SECOND
-    this.lastTimestamp = currentTimestamp
-    if (currentTimestamp - startTimestamp > PLAYER_DELAY) {
+    this._lastTimestamp = currentTimestamp
+    if (currentTimestamp - this.startTimestamp > PLAYER_DELAY) {
       for (const player of this.players) {
         if (player instanceof ComputerPlayer) {
           player.decideNextMove(this.boxes)
@@ -58,15 +79,30 @@ export class Game {
     this.boxes.splice(index, 1)
   }
 
+  addPlayer(player: IPlayer) {
+    this.players.push(player)
+  }
+
+  setupPlayers(playerSetting: PlayerSetting) {
+    const spacing = 1 / (this.players.length + 1)
+    this.players.forEach((player, i) => {
+      player.reset(playerSetting)
+      player.x = spacing * (i + 1)
+      player.timestamp = Date.now()
+    })
+  }
+
   updatePlayers(players: Player[]) {
     return new Game({
       players,
+      mode: this._mode,
     })
   }
 
   resetGame(players: Player[]) {
     return new Game({
       players,
+      mode: this._mode,
     })
   }
 
@@ -88,17 +124,5 @@ export class Game {
         }
       })
       .sort((a, b) => b.timestamp - a.timestamp)
-  }
-
-  get players() {
-    return this._players
-  }
-
-  get computers() {
-    return this._players.filter((player) => player instanceof ComputerPlayer)
-  }
-
-  get boxes() {
-    return this._boxes
   }
 }
